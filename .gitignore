@@ -1,35 +1,53 @@
-# Виртуальное окружение
+# ==============================
+# Python / Virtual Environment
+# ==============================
 venv/
 env/
 ENV/
-
-# Python
+.venv/
+__pycache__/
 *.pyc
 *.pyo
-__pycache__/
+*.pyd
 *.so
 *.egg
 *.egg-info/
 dist/
 build/
+.mypy_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.tox/
 
+# ==============================
 # Django
+# ==============================
 db.sqlite3
 *.sqlite3
 *.log
 media/
 staticfiles/
+celerybeat-schedule
+celerybeat.pid
 
-# Переменные окружения
+# ==============================
+# Environment Variables / Secrets
+# ==============================
 .env
+.env.local
+.env.development
+.env.production
+*.pem
+secrets.json
 
-# IDE
+# ==============================
+# OS / IDE
+# ==============================
+.DS_Store
+Thumbs.db
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
-.DS_Store
-Thumbs.db

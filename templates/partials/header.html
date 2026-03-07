@@ -1,0 +1,35 @@
+<header class="sticky top-0 z-40 w-full bg-[#111111] text-white border-b border-white/10">
+  <div class="flex h-16 items-center justify-between px-4 md:px-6">
+
+    {# Логотип #}
+    <a href="{% url 'catalog:index' %}" class="text-2xl font-bold tracking-tighter">
+      EYESHOP
+    </a>
+
+    {# Навигация (desktop) #}
+    <nav class="hidden md:flex gap-6 text-sm font-medium">
+      <a href="{% url 'catalog:index' %}"
+        class="hover:text-gray-300 transition-colors uppercase tracking-wider">Shop</a>
+      <a href="#" class="hover:text-gray-300 transition-colors uppercase tracking-wider">Collections</a>
+      <a href="#" class="hover:text-gray-300 transition-colors uppercase tracking-wider">About</a>
+    </nav>
+
+    {# Правая часть: поиск, аккаунт, корзина #}
+    <div class="flex items-center gap-4 text-sm font-medium">
+      <button class="hover:text-gray-300 transition-colors uppercase tracking-wider">
+        Search
+      </button>
+      <button class="hover:text-gray-300 transition-colors uppercase tracking-wider hidden md:block">
+        Account
+      </button>
+
+      {# Кнопка корзины — открывает Alpine.js сайдбар #}
+      <button class="hover:text-gray-300 transition-colors flex items-center gap-1 uppercase tracking-wider"
+        @click="openCart()">
+        Bag
+        <span class="text-xs" x-show="cartCount > 0" x-text="'[' + cartCount + ']'"></span>
+      </button>
+    </div>
+
+  </div>
+</header>

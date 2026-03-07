@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shop{% endblock %}
+{% block meta_description %}Browse our premium eyewear frames collection{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-[#111111] text-white pt-8 pb-24">
+
+  <div class="px-4 md:px-6 mb-8">
+    <h1 class="text-2xl font-medium tracking-wide uppercase mb-8">All Eyewear</h1>
+
+    {# Панель фильтров + сортировка #}
+    <div class="flex justify-between items-center border-b border-white/10 pb-4">
+
+      {# Категории — каждая кнопка делает HTMX-запрос #}
+      <div class="flex gap-4 overflow-x-auto no-scrollbar text-sm text-gray-400">
+        {% for category in categories %}
+        <button
+          class="whitespace-nowrap transition-colors hover:text-white {% if active_category == category.slug %}text-white{% endif %}"
+          hx-get="{% url 'catalog:index' %}?category={{ category.slug }}" hx-target="#products-grid" hx-swap="innerHTML"
+          hx-push-url="true" hx-indicator="#loading-indicator">
+          {{ category.name }}
+        </button>
+        {% endfor %}
+        {# Кнопка "All" #}
+        <button
+          class="whitespace-nowrap transition-colors hover:text-white {% if not active_category %}text-white{% endif %}"
+          hx-get="{% url 'catalog:index' %}" hx-target="#products-grid" hx-swap="innerHTML" hx-push-url="true">
+          All
+        </button>
+      </div>
+
+      <button class="text-xs font-medium uppercase tracking-wider hover:text-gray-300 transition-colors">
+        Filter &amp; Sort +
+      </button>
+    </div>
+  </div>
+
+  {# Индикатор загрузки (показывается во время HTMX-запроса) #}
+  <div id="loading-indicator" class="htmx-indicator flex justify-center py-8">
+    <div class="w-6 h-6 border border-white/30 border-t-white rounded-full animate-spin"></div>
+  </div>
+
+  {# Сетка товаров — HTMX заменяет только содержимое этого div #}
+  <div id="products-grid"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border-y border-white/10">
+    {% include "catalog/partials/product_grid.html" %}
+  </div>
+
+  {# Пагинация #}
+  <div class="flex justify-center mt-16">
+    <button
+      class="border border-white/30 px-8 py-3 text-sm font-medium uppercase tracking-wider hover:bg-white hover:text-black transition-colors">
+      View More Items
+    </button>
+  </div>
+  <div class="flex justify-center mt-4 text-xs text-gray-500 tracking-widest">
+    — 1 2 3 4 ... 7 —
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+<div>
+  {# Backdrop (затемнение фона) #}
+  <div class="fixed inset-0 bg-black/50 z-50 transition-opacity" x-show="isCartOpen"
+    x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="closeCart()"
+    style="display:none;">
+  </div>
+
+  {# Сайдбар #}
+  <div
+    class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#1a1a1a] text-white shadow-xl flex flex-col border-l border-white/10"
+    x-show="isCartOpen" x-transition:enter="transition ease-out duration-350"
+    x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+    x-transition:leave="transition ease-in duration-250" x-transition:leave-start="translate-x-0"
+    x-transition:leave-end="translate-x-full" style="display:none;">
+
+    {# Шапка сайдбара #}
+    <div class="flex items-center justify-between p-4 border-b border-white/10">
+      <h2 class="text-lg font-medium tracking-wide uppercase">
+        Your Bag
+        <span class="text-sm text-gray-400" x-text="'[' + cartCount + ']'"></span>
+      </h2>
+      <button @click="closeCart()"
+        class="text-sm text-gray-400 hover:text-white flex items-center gap-2 uppercase tracking-wider transition-colors">
+        Close
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    {# Список товаров (HTMX подгружает при открытии) #}
+    <div class="flex-1 overflow-y-auto no-scrollbar p-4 space-y-6" id="cart-items" hx-get="{% url 'cart:detail' %}"
+      hx-trigger="open-cart from:body" hx-swap="innerHTML">
+      {# Пустое состояние по умолчанию #}
+      <div class="text-center text-gray-500 mt-10 text-sm">Your bag is empty.</div>
+    </div>
+
+    {# Футер с итогом #}
+    <div class="p-4 border-t border-white/10 bg-[#111111]">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-sm font-medium uppercase tracking-wider">Subtotal:</span>
+        <span class="text-lg" x-text="'$' + cartTotal.toFixed(2)"></span>
+      </div>
+      <p class="text-xs text-gray-500 mb-4">Taxes and shipping calculated at checkout</p>
+      {# <a href="{% url 'orders:create' %}" #} <a href="#"
+        class="block w-full bg-white text-black py-4 text-sm font-medium uppercase tracking-wider text-center hover:bg-gray-200 transition-colors">
+        Checkout
+      </a>
+    </div>
+
+  </div>
+</div>

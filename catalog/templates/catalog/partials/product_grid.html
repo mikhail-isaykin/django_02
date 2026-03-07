@@ -1,0 +1,30 @@
+{% for product in products %}
+<a href="{% url 'catalog:product_detail' product.slug %}" class="group relative bg-[#111111] flex flex-col"
+  hx-get="{% url 'catalog:product_detail' product.slug %}" hx-target="#main-content" hx-push-url="true"
+  hx-swap="innerHTML">
+
+  {# Изображение товара #}
+  <div class="relative aspect-[3/4] overflow-hidden bg-[#1a1a1a]">
+    {% if product.main_image %}
+    <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
+      class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+    {% else %}
+    <div
+      class="w-full h-full bg-[#222] flex items-center justify-center text-gray-600 text-xs uppercase tracking-wider">
+      No image
+    </div>
+    {% endif %}
+
+  </div>
+
+  {# Название и цена #}
+  <div class="p-4 flex justify-between items-start border-t border-white/10">
+    <h3 class="text-xs font-medium uppercase tracking-wide max-w-[70%]">{{ product.name }}</h3>
+    <span class="text-xs">${{ product.price }}</span>
+  </div>
+</a>
+{% empty %}
+<div class="col-span-4 py-24 text-center text-gray-500 text-sm uppercase tracking-wider">
+  No products found in this category.
+</div>
+{% endfor %}
