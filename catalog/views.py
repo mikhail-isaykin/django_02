@@ -53,12 +53,20 @@ class ProductDetailView(DetailView):
     template_name       = "catalog/product_detail.html"
     context_object_name = "product"
 
+    # Партиал для HTMX-запросов (без base.html)
+    htmx_template       = "catalog/partials/product_detail_partial.html"
+
     def get_queryset(self):
         return (
             Product.objects
             .select_related("category")
             .prefetch_related("images")
         )
+
+    def get_template_names(self) -> list[str]:
+        if self.request.headers.get("HX-Request"):
+            return [self.htmx_template]
+        return [self.template_name]
 
     def get_context_data(self, **kwargs) -> dict:
         ctx = super().get_context_data(**kwargs)

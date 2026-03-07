@@ -1,0 +1,228 @@
+<div class="flex flex-col lg:flex-row h-auto lg:h-[calc(100vh-80px)] overflow-visible lg:overflow-hidden">
+
+    {# ── Левая колонка: детали товара ── #}
+    <div class="w-full lg:w-1/3 p-6 lg:p-12 flex flex-col overflow-y-auto">
+
+        {# Хлебные крошки #}
+        <div class="text-xs text-gray-500 mb-8 tracking-wider uppercase">
+            <a href="{% url 'catalog:index' %}" hx-get="{% url 'catalog:index' %}" hx-target="#main-content"
+                hx-push-url="true" class="hover:text-black transition-colors">Catalog</a>
+            / {{ product.name }}
+        </div>
+
+        <h1 class="text-2xl font-medium tracking-wide uppercase mb-2">{{ product.name }}</h1>
+        <p class="text-lg mb-12">${{ product.price }}</p>
+
+        {# Табы: Details / Size & Fit / Shipping #}
+        <div class="flex border-b border-black/10 mb-6">
+            {% for tab in tabs %}
+            <button @click="activeTab = '{{ tab }}'"
+                :class="activeTab === '{{ tab }}' ? 'bg-black text-white' : 'text-gray-500 hover:text-black'"
+                class="flex-1 py-3 text-xs font-medium uppercase tracking-wider text-center transition-colors">
+                {{ tab }}
+            </button>
+            {% endfor %}
+        </div>
+
+        {# Контент таба #}
+        <div class="flex-1">
+            <div x-show="activeTab === 'Details'">
+                <ul class="list-disc pl-4 space-y-2 text-sm text-gray-600">
+                    {% if product.frame_color %}<li>Frame Color: {{ product.frame_color }}</li>{% endif %}
+                    {% if product.lens_color %}<li>Lens Color: {{ product.lens_color }}</li>{% endif %}
+                    {% if product.frame_material %}<li>Material: {{ product.frame_material }}</li>{% endif %}
+                    {% if product.shape %}<li>Shape: {{ product.shape }}</li>{% endif %}
+                    {% if product.is_polarized %}<li>Polarized Lenses</li>{% endif %}
+                    {% for detail in product.details %}
+                    <li>{{ detail }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div x-show="activeTab === 'Size & Fit'" style="display:none" class="text-sm text-gray-600">
+                {# MM / IN toggle #}
+                <div class="flex gap-4 mb-6 uppercase tracking-widest text-xs">
+                    <button class="border-b border-black pb-1 text-black">MM</button>
+                    <button class="text-gray-400 hover:text-black transition-colors">IN</button>
+                </div>
+
+                <div class="flex gap-12">
+                    {# Dimensions #}
+                    <div class="space-y-1">
+                        <p>Lens width: {{ product.lens_width_mm|default:"-" }} mm</p>
+                        <p>Bridge: {{ product.bridge_mm|default:"-" }} mm</p>
+                        <p>Frame front: {{ product.frame_front_mm|default:"-" }} mm</p>
+                        <p>Temple length: {{ product.temple_length_mm|default:"-" }} mm</p>
+                        <p>Lens height: {{ product.lens_height_mm|default:"-" }} mm</p>
+                    </div>
+
+                    {# Fit Sliders #}
+                    <div class="flex-1 max-w-[200px]">
+                        <p class="mb-4">Fit</p>
+
+                        <div class="mb-6">
+                            <div class="flex justify-between text-xs text-gray-400 uppercase tracking-widest mb-2">
+                                <span>Narrow</span>
+                                <span>Wide</span>
+                            </div>
+                            <div class="relative w-full h-[1px] bg-gray-300">
+                                <div class="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full border-2 border-black pointer-events-none"
+                                    style="left: {{ product.fit_narrow_wide }}%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs text-gray-400 uppercase tracking-widest mb-2">
+                                <span>Low</span>
+                                <span>High</span>
+                            </div>
+                            <div class="relative w-full h-[1px] bg-gray-300">
+                                <div class="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full border-2 border-black pointer-events-none"
+                                    style="left: {{ product.fit_low_high }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div x-show="activeTab === 'Shipping & Returns'" style="display:none">
+                <p class="text-sm text-gray-600">Free standard shipping on orders over $200. Returns accepted within 14
+                    days.
+                </p>
+            </div>
+        </div>
+
+        <button
+            class="text-xs text-gray-500 underline underline-offset-4 mt-8 self-start hover:text-black transition-colors">
+            Size guide
+        </button>
+    </div>
+
+    {# ── Средняя колонка: главное фото ── #}
+    <div class="w-full lg:w-1/3 relative bg-transparent flex items-center justify-center aspect-[3/4] lg:aspect-auto">
+        <img :src="currentImage" :alt="'{{ product.name }}'"
+            class="w-full h-full object-cover transition-opacity duration-300" />
+
+        {# Стрелки навигации (показываем если изображений > 1) #}
+        <template x-if="images.length > 1">
+            <div>
+                <button @click="prevImage()"
+                    class="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-black/50 hover:text-black transition-colors">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                </button>
+                <button @click="nextImage()"
+                    class="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-black/50 hover:text-black transition-colors">
+                    <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+            </div>
+        </template>
+    </div>
+
+    {# ── Правая колонка: миниатюры + действия ── #}
+    <div class="w-full lg:w-1/3 flex flex-col items-center lg:items-end">
+
+        {# Миниатюры #}
+        <template x-if="images.length > 1">
+            <div class="flex h-32 w-full max-w-[200px] mt-12 mb-auto lg:mr-12 border-b border-black/10">
+                <template x-for="(img, index) in images" :key="index">
+                    <button @click="setImage(index)"
+                        :class="activeImageIndex === index ? 'opacity-100' : 'opacity-50 hover:opacity-75'"
+                        class="flex-1 relative border-r border-black/10 last:border-r-0 transition-opacity overflow-hidden bg-transparent">
+                        <img :src="img" :alt="'View ' + (index + 1)" class="w-full h-full object-cover" />
+                    </button>
+                </template>
+            </div>
+        </template>
+        <template x-if="images.length <= 1">
+            <div class="flex-1 w-full bg-transparent"></div>
+        </template>
+
+        {# Кнопки действий #}
+        <div class="p-6 lg:p-12 w-full flex flex-col justify-end mt-auto">
+
+            {# Кнопки действий #}
+            <div class="mt-auto space-y-4">
+                {# Add to Bag — HTMX POST #}
+                <button
+                    class="w-full bg-black text-white py-4 text-sm font-medium uppercase tracking-wider hover:bg-gray-800 transition-colors"
+                    hx-post="{% url 'cart:add' product.id %}" hx-swap="none"
+                    @htmx:after-request="$dispatch('show-toast', 'Added to bag')">
+                    Add to Bag
+                </button>
+
+                <button
+                    class="w-full bg-transparent border border-black/30 text-black py-4 text-sm font-medium uppercase tracking-wider hover:bg-black/5 transition-colors">
+                    Add to Wishlist
+                </button>
+
+                <div class="flex justify-between text-xs text-gray-500 pt-4">
+                    <button class="underline underline-offset-4 hover:text-black transition-colors">
+                        Check in-store availability
+                    </button>
+                    <button class="hover:text-black transition-colors">Need help?</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{# ── Complete the Look ── #}
+<div class="border-t border-black/10">
+    <div class="p-6 lg:p-12 border-b border-black/10">
+        <h2 class="text-xl font-medium uppercase tracking-wide">Complete the Look</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3">
+        <div class="p-6 lg:p-12 flex flex-col justify-end border-r border-black/10 min-h-[400px]">
+            <div class="text-sm text-gray-500 tracking-widest">[01] [02]</div>
+        </div>
+        {% for look_item in look_items %}
+        <a href="{% url 'catalog:product_detail' look_item.slug %}"
+            class="group relative border-r border-black/10 bg-transparent flex flex-col min-h-[400px]"
+            hx-get="{% url 'catalog:product_detail' look_item.slug %}" hx-target="#main-content" hx-push-url="true">
+            {% if look_item.is_on_sale %}
+            <div
+                class="absolute top-4 right-4 bg-white/80 backdrop-blur-md px-2 py-1 text-xs uppercase tracking-wider border border-black/10 z-10">
+                Sale</div>
+            {% endif %}
+            <div class="flex-1 p-8 flex items-center justify-center">
+                <img src="{{ look_item.main_image.image.url }}" alt="{{ look_item.name }}"
+                    class="max-w-full max-h-64 object-contain transition-transform duration-700 group-hover:scale-105" />
+            </div>
+            <div class="p-4 flex justify-between items-start border-t border-black/10 bg-transparent">
+                <h3 class="text-xs font-medium uppercase tracking-wide">{{ look_item.name }}</h3>
+                <span class="text-xs">${{ look_item.price }}</span>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function productDetail(images) {
+        return {
+            images: images,
+            activeImageIndex: 0,
+            activeTab: 'Details',
+
+            init() {
+            },
+
+            get currentImage() {
+                return this.images[this.activeImageIndex] || '';
+            },
+
+            setImage(index) { this.activeImageIndex = index; },
+
+            nextImage() {
+                this.activeImageIndex = (this.activeImageIndex + 1) % this.images.length;
+            },
+
+            prevImage() {
+                this.activeImageIndex = (this.activeImageIndex - 1 + this.images.length) % this.images.length;
+            },
+        };
+    }
+</script>

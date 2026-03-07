@@ -1,28 +1,36 @@
 {% for product in products %}
-<a href="{% url 'catalog:product_detail' product.slug %}" class="group relative bg-[#111111] flex flex-col"
-  hx-get="{% url 'catalog:product_detail' product.slug %}" hx-target="#main-content" hx-push-url="true"
-  hx-swap="innerHTML">
+<div class="group flex flex-col mb-8">
+  <a href="{% url 'catalog:product_detail' product.slug %}" class="relative w-full overflow-hidden block"
+    hx-get="{% url 'catalog:product_detail' product.slug %}" hx-target="#main-content" hx-push-url="true"
+    hx-swap="innerHTML">
 
-  {# Изображение товара #}
-  <div class="relative aspect-[3/4] overflow-hidden bg-[#1a1a1a]">
-    {% if product.main_image %}
-    <img src="{{ product.main_image.url }}" alt="{{ product.name }}"
-      class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-    {% else %}
-    <div
-      class="w-full h-full bg-[#222] flex items-center justify-center text-gray-600 text-xs uppercase tracking-wider">
-      No image
+    {# Изображение товара #}
+    <div class="relative w-full aspect-[4/5] bg-transparent">
+      {% if product.main_image %}
+      <img src="{{ product.main_image.image.url }}" alt="{{ product.name }}"
+        class="object-cover w-full h-full transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+      {% else %}
+      <div class="w-full h-full bg-[#f0f0f0] flex items-center justify-center text-gray-500 text-xs tracking-wider">
+        No image
+      </div>
+      {% endif %}
     </div>
-    {% endif %}
 
-  </div>
+  </a>
 
-  {# Название и цена #}
-  <div class="p-4 flex justify-between items-start border-t border-white/10">
-    <h3 class="text-xs font-medium uppercase tracking-wide max-w-[70%]">{{ product.name }}</h3>
-    <span class="text-xs">${{ product.price }}</span>
+  {# Текст под картинкой (Название, Цена, Добавить в избранное) #}
+  <div class="mt-4 flex flex-col items-start px-2">
+    <a href="{% url 'catalog:product_detail' product.slug %}" class="hover:underline underline-offset-4">
+      <h3 class="text-[13px] font-normal tracking-wide text-gray-800">{{ product.name }}</h3>
+    </a>
+    <span class="text-[13px] font-normal text-gray-800 mt-0.5">${{ product.price }}</span>
+
+    <button
+      class="mt-3 text-[11px] font-semibold text-gray-800 tracking-widest border-b border-gray-800 pb-0.5 hover:text-black transition-colors">
+      ADD TO WISHLIST
+    </button>
   </div>
-</a>
+</div>
 {% empty %}
 <div class="col-span-4 py-24 text-center text-gray-500 text-sm uppercase tracking-wider">
   No products found in this category.

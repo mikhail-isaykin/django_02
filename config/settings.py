@@ -133,8 +133,8 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 #STATIC_ROOT = BASE_DIR / "staticfiles" опционально
 
-#MEDIA_URL  = "/media/"
-#MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL  = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 #SESSION_ENGINE = "django.contrib.sessions.backends.db"
 # NowPayments
