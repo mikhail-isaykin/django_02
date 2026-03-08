@@ -41,7 +41,7 @@ class CartAddView(View):
     """POST /cart/add/<product_id>/ — добавить товар."""
 
     def post(self, request: HttpRequest, product_id: int) -> HttpResponse:
-        product = get_object_or_404(Product, pk=product_id)
+        product = get_object_or_404(Product.objects.prefetch_related("images"), pk=product_id)
         cart    = Cart(request)
 
         # Парсим тело запроса (HTMX отправляет JSON или form-data)
