@@ -136,7 +136,15 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL  = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-#SESSION_ENGINE = "django.contrib.sessions.backends.db"
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+    }
+}
+
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
+
 # NowPayments
 '''NOWPAYMENTS_API_KEY  = config("NOWPAYMENTS_API_KEY", default="")
 NOWPAYMENTS_IPN_SECRET = config("NOWPAYMENTS_IPN_SECRET", default="")
