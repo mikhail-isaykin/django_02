@@ -27,7 +27,6 @@ class CatalogView(ListView):
             Product.objects
             .select_related("category")
             .prefetch_related("images")
-            .distinct()
         )
         category_slug = self.request.GET.get("category")
         if category_slug:

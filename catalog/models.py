@@ -15,7 +15,7 @@ from django.utils.text import slugify
 
 class TimeStampedModel(models.Model):
     """Абстрактная модель: created_at и updated_at для всех дочерних."""
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at  = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -76,18 +76,21 @@ class Product(TimeStampedModel):
     @property
     def main_image(self):
         """Возвращает главное изображение товара."""
-        return self.images.filter(order=0).first() or self.images.first()
+        images = list(self.images.all())
+        if not images:
+            return None
+        return next((img for img in images if img.order == 0), images[0])
 
     @property
     def images_json(self) -> str:
         """Список URL изображений для Alpine.js (JSON)."""
-        urls = [img.image.url for img in self.images.all().order_by("order")]
+        urls = [img.image.url for img in self.images.all()]
         return json.dumps(urls)
 
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="images")
     image   = models.ImageField(upload_to="products/")
-    order   = models.PositiveSmallIntegerField(default=0)
+    order   = models.PositiveSmallIntegerField(default=0, db_index=True)
 
     class Meta:
         ordering = ["order"]
