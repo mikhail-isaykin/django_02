@@ -1,114 +1,96 @@
-# eyeshop 🕶️
-
-A boutique e-commerce store for designer eyewear frames. Fast, minimal, no fluff.
-
-Built as a proper Django project — server-rendered, SPA-like navigation via HTMX, reactive cart via Alpine.js, crypto checkout via NowPayments. Runs in Docker, served by Nginx.
 
 ---
 
-### What's inside
+# 🧠 Django Training Project
 
-The stack is deliberately lean. No React, no webpack, no node_modules nightmare.
+Этот проект содержит обучающие модели и данные для решения практических задач по Django ORM: `F`, `Q`, `annotate`, `Window`, `ExpressionWrapper`, `Rank`, `Concat` и другим.
 
-- **Django 5** does the heavy lifting — ORM, sessions, templates, admin
-- **PostgreSQL** for the database
-- **HTMX** makes the UI feel like a SPA without writing a single line of fetch()
-- **Alpine.js** handles the cart sidebar state and product gallery
-- **Tailwind** for styling, with a small `custom.css` for variables and animations
-- **NowPayments** for crypto payment processing
-- **Docker + Nginx + Gunicorn** for deployment
+## 🚀 Установка и запуск проекта
 
----
-
-### How it works
-
-The catalog page filters by category without a page reload — HTMX swaps just the product grid. Product navigation works the same way. The URL updates, the back button works, but the page never fully refreshes.
-
-The cart lives in Django sessions server-side. When you hit "Add to Bag", HTMX posts to the backend, Django updates the session and fires back an `HX-Trigger` header. Alpine.js picks that up, updates the counter in the header, and opens the sidebar. The sidebar itself fetches its content fresh from the server each time it opens.
-
-Payments go through NowPayments — an invoice gets created, the user pays in crypto, NowPayments sends a signed webhook, we verify it with HMAC-SHA512 and flip the order status to paid.
-
----
-
-### Getting started
-
-Clone the repo and copy the env file:
+### 🔁 1. Клонирование репозитория
 
 ```bash
-git clone https://github.com/yourname/eyeshop.git
-cd eyeshop
-cp .env.example .env
+git clone https://github.com/username/training_project.git
+cd training_project
 ```
 
-Fill in `.env` with your database credentials and NowPayments API keys, then:
+### 🧱 2. Создание виртуального окружения
 
 ```bash
-docker compose up --build
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py createsuperuser
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-That's it. Open `http://localhost` in your browser.
-Admin lives at `http://localhost/admin`.
+(Для Windows: `venv\Scripts\activate`)
 
----
+### 📦 3. Установка зависимостей
 
-### Project layout
-
-```
-eyeshop/
-│
-├── apps/
-│   ├── catalog/        — products, categories, images
-│   ├── cart/           — session cart with a proper Cart class
-│   ├── orders/         — order creation and management
-│   └── payments/       — NowPayments integration, webhook handler
-│
-├── templates/
-│   ├── base.html
-│   ├── partials/       — header, footer, cart sidebar, toast
-│   └── catalog/        — shop page, product detail, grid partial
-│
-├── static/
-│   ├── css/custom.css  — CSS variables, animations
-│   └── js/cart.js      — Alpine.js cart store
-│
-├── config/             — settings split into base / local / production
-├── nginx/
-├── Dockerfile
-└── docker-compose.yml
+```bash
+pip install -r requirements.txt
 ```
 
 ---
 
-### Environment variables
+## 🗃️ Работа с базой данных
 
-Copy `.env.example` to `.env` and fill these in:
+### 📂 4. Восстановление базы данных
 
+Мы используем **PostgreSQL**. Убедитесь, что PostgreSQL установлен и запущен.
+
+Восстанови базу данных из дампа (внутри проекта есть файл `dump.sql`):
+
+```bash
+createdb training_db
+psql -U <ваш_пользователь_postgres> -d training_db -f dump.sql
 ```
-SECRET_KEY              — Django secret key
-DEBUG                   — True in dev, False in prod
-ALLOWED_HOSTS           — comma-separated list of hostnames
 
-DB_NAME / DB_USER / DB_PASSWORD / DB_HOST
+📝 *Не забудь заменить `<ваш_пользователь_postgres>` на своё имя пользователя PostgreSQL.*
 
-NOWPAYMENTS_API_KEY     — from your NowPayments dashboard
-NOWPAYMENTS_IPN_SECRET  — for webhook signature verification
-NOWPAYMENTS_SANDBOX     — set True while testing
+---
+
+## ⚙️ 5. Настройки подключения к БД
+
+Открой `training_project/settings.py` и укажи свои параметры подключения к PostgreSQL:
+
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'training_db',
+        'USER': 'ваш_пользователь',
+        'PASSWORD': 'ваш_пароль',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 ```
 
 ---
 
-### A few things worth knowing
+## ▶️ 6. Запуск проекта
 
-The cart uses Django sessions, not localStorage. This means the cart survives page refreshes and works without JavaScript enabled for reading — only the interactive bits (open/close sidebar, quantity buttons) need JS.
-
-The `NowPaymentsService` class is fully isolated in `apps/payments/services.py`. Swapping out the payment provider means touching exactly one file.
-
-Filtering on the catalog page is done entirely server-side. No client-side filtering, no JSON endpoints, no state management. HTMX sends a GET request with a query param, Django filters the queryset, returns a rendered HTML partial. Simple.
+```bash
+python manage.py runserver
+```
 
 ---
 
-### License
+## ✍️ Цель проекта
 
-MIT — do whatever you want with it.
+Проект разработан для практики и тестирования знаний в следующих темах:
+
+- Работа с ORM: `filter`, `get`, `update`, `create`, `delete`
+- Агрегации: `Count`, `Avg`, `Sum`
+- Аннотации и выражения: `annotate`, `F`, `Q`, `ExpressionWrapper`
+- Продвинутые конструкции: `Case`, `When`, `Window`, `DenseRank`, `Rank`
+- Работа с датами и временем
+- Подготовка интерактивных заданий для Stepik или обучающих платформ
+
+---
+
+## 💬 Обратная связь
+
+Если у тебя есть предложения по улучшению или ты хочешь добавить новые задачи — **открой issue или отправь pull request!**
+
+---
+
