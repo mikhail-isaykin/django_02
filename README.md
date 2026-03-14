@@ -1,57 +1,37 @@
+# Django Training Project
 
----
+Проект содержит обучающие модели и данные для практики Django ORM: `F`, `Q`, `annotate`, `Window`, `ExpressionWrapper`, `Rank`, `Concat` и другим.
 
-# 🧠 Django Training Project
+## Установка и запуск
 
-Этот проект содержит обучающие модели и данные для решения практических задач по Django ORM: `F`, `Q`, `annotate`, `Window`, `ExpressionWrapper`, `Rank`, `Concat` и другим.
-
-## 🚀 Установка и запуск проекта
-
-### 🔁 1. Клонирование репозитория
-
+### 1. Клонирование репозитория
 ```bash
 git clone https://github.com/username/training_project.git
 cd training_project
 ```
 
-### 🧱 2. Создание виртуального окружения
-
+### 2. Создание виртуального окружения
 ```bash
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 ```
 
-(Для Windows: `venv\Scripts\activate`)
-
-### 📦 3. Установка зависимостей
-
+### 3. Установка зависимостей
 ```bash
 pip install -r requirements.txt
 ```
 
----
+### 4. Восстановление базы данных
 
-## 🗃️ Работа с базой данных
-
-### 📂 4. Восстановление базы данных
-
-Мы используем **PostgreSQL**. Убедитесь, что PostgreSQL установлен и запущен.
-
-Восстанови базу данных из дампа (внутри проекта есть файл `dump.sql`):
-
+Убедись что PostgreSQL установлен и запущен, затем восстанови базу из дампа:
 ```bash
 createdb training_db
-psql -U <ваш_пользователь_postgres> -d training_db -f dump.sql
+psql -U <ваш_пользователь> -d training_db -f dump.sql
 ```
 
-📝 *Не забудь заменить `<ваш_пользователь_postgres>` на своё имя пользователя PostgreSQL.*
+### 5. Настройка подключения к БД
 
----
-
-## ⚙️ 5. Настройки подключения к БД
-
-Открой `training_project/settings.py` и укажи свои параметры подключения к PostgreSQL:
-
+В файле `training_project/settings.py` укажи свои параметры:
 ```python
 DATABASES = {
     'default': {
@@ -65,32 +45,17 @@ DATABASES = {
 }
 ```
 
----
-
-## ▶️ 6. Запуск проекта
-
+### 6. Запуск
 ```bash
 python manage.py runserver
 ```
 
 ---
 
-## ✍️ Цель проекта
+## Темы
 
-Проект разработан для практики и тестирования знаний в следующих темах:
-
-- Работа с ORM: `filter`, `get`, `update`, `create`, `delete`
+- Базовый ORM: `filter`, `get`, `update`, `create`, `delete`
 - Агрегации: `Count`, `Avg`, `Sum`
 - Аннотации и выражения: `annotate`, `F`, `Q`, `ExpressionWrapper`
 - Продвинутые конструкции: `Case`, `When`, `Window`, `DenseRank`, `Rank`
 - Работа с датами и временем
-- Подготовка интерактивных заданий для Stepik или обучающих платформ
-
----
-
-## 💬 Обратная связь
-
-Если у тебя есть предложения по улучшению или ты хочешь добавить новые задачи — **открой issue или отправь pull request!**
-
----
-
