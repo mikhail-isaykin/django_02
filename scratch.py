@@ -1,5 +1,5 @@
 from django.db.models import F, Window, Sum, Count, ExpressionWrapper, DecimalField
-from django.db.models.functions import Rank
+from django.db.models.functions import Rank, DenseRank
 from traning_app.models import Product
 
 
@@ -9,3 +9,11 @@ Product.objects.annotate(
         output_field=DecimalField(max_digits=8, decimal_places=2)
     )
 ).values('name', 'final_price')[:5]
+
+
+Product.objects.annotate(
+    rank=Window(
+        expression=DenseRank(),
+        order_by=F('rating').desc()
+    )
+).values('name', 'rating', 'rank')[:5]
