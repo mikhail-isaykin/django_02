@@ -6,5 +6,7 @@ from blog import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
-    path('', views.project_home, name='project_home')
+    path('', views.project_home, name='project_home'),
+    path('api/v1/', include('blog.api_v1_urls')),
+    path('api/v2/', include('blog.api_v2_urls'))
 ]
