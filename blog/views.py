@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 
 def home_page(request):
@@ -39,3 +39,14 @@ def product_slug(request, slug):
 
 def new_user_profile(request, user_id):
     return HttpResponse(f'Это новый профиль пользователя ID: {user_id}')
+
+
+def conditional_redirect(request):
+    target = request.GET.get('goto')
+
+    if target == 'google':
+        return HttpResponseRedirect("https://www.google.com")
+    elif target == 'yandex':
+        return HttpResponseRedirect("https://www.yandex.ru")
+    else:
+        return HttpResponse("Куда хотите перейти? Используйте ?goto=google или ?goto=yandex.")
