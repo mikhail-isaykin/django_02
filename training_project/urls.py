@@ -8,5 +8,6 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path('', views.project_home, name='project_home'),
     path('api/v1/', include('blog.api_v1_urls')),
-    path('api/v2/', include('blog.api_v2_urls'))
+    path('api/v2/', include('blog.api_v2_urls')),
+    path('products/', include('traning_app.urls')),
 ]
