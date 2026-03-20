@@ -68,3 +68,20 @@ def user_profile(request, user_id):
 
     return JsonResponse({"status": "ok", "user": user})
 
+
+@require_http_methods(["GET"])
+def product_list(request):
+    category = request.GET.get("category")
+
+    products = [
+        {"id": 1, "name": "Ноутбук", "category": "electronics", "price": 75000},
+        {"id": 2, "name": "Кофеварка", "category": "appliances", "price": 4500},
+        {"id": 3, "name": "Наушники", "category": "electronics", "price": 12000},
+    ]
+
+    if category:
+        products = [p for p in products if p["category"] == category]
+
+    return JsonResponse({"count": len(products), "products": products})
+
+
