@@ -1,4 +1,6 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.views.decorators.http import require_http_methods
+
 
 
 def home_page(request):
@@ -50,3 +52,19 @@ def conditional_redirect(request):
         return HttpResponseRedirect("https://www.yandex.ru")
     else:
         return HttpResponse("Куда хотите перейти? Используйте ?goto=google или ?goto=yandex.")
+
+
+@require_http_methods(["GET"])
+def user_profile(request, user_id):
+    users = {
+        1: {"username": "admin", "role": "superuser", "active": True},
+        2: {"username": "john_doe", "role": "editor", "active": False},
+    }
+
+    user = users.get(user_id)
+
+    if user is None:
+        return JsonResponse({"error": "Пользователь не найден."}, status=404)
+
+    return JsonResponse({"status": "ok", "user": user})
+
