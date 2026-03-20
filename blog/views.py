@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.views.decorators.http import require_http_methods
+import json
 
 
 
@@ -83,5 +84,25 @@ def product_list(request):
         products = [p for p in products if p["category"] == category]
 
     return JsonResponse({"count": len(products), "products": products})
+
+
+@require_http_methods(["POST"])
+def login_view(request):
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Невалидный JSON."}, status=400)
+
+    username = body.get("username", "").strip()
+    password = body.get("password", "").strip()
+
+    if not username or not password:
+        return JsonResponse({"error": "Укажите username и password."}, status=422)
+
+    if username == "admin" and password == "1234":
+        return JsonResponse({"status": "ok", "token": "abc123xyz"})
+
+    return JsonResponse({"error": "Неверные учётные данные."}, status=401)
+
 
 
