@@ -3,7 +3,6 @@ from django.views.decorators.http import require_http_methods
 import json
 
 
-
 def home_page(request):
     return HttpResponse('Добро пожаловать в мой блог!')
 
@@ -105,4 +104,43 @@ def login_view(request):
     return JsonResponse({"error": "Неверные учётные данные."}, status=401)
 
 
+@require_http_methods(["GET"])
+def product_search(request):
+    products = [
+        {"id": 1, "name": "Ноутбук",   "category": "electronics", "price": 75000, "rating": 4.8},
+        {"id": 2, "name": "Кофеварка", "category": "appliances",  "price": 4500,  "rating": 3.9},
+        {"id": 3, "name": "Наушники",  "category": "electronics", "price": 12000, "rating": 4.5},
+        {"id": 4, "name": "Телефон",   "category": "electronics", "price": 55000, "rating": 4.2},
+        {"id": 5, "name": "Блендер",   "category": "appliances",  "price": 3200,  "rating": 4.1},
+    ]
+
+    query    = request.GET.get("q", "").strip().lower()
+    category = request.GET.get("category", "").strip()
+    sort_by  = request.GET.get("sort", "id")
+    order    = request.GET.get("order", "asc")
+    page     = int(request.GET.get("page", 1))
+    per_page = int(request.GET.get("per_page", 2))
+
+    ALLOWED_SORT_FIELDS = {"id", "price", "rating"}
+    if sort_by not in ALLOWED_SORT_FIELDS:
+        return JsonResponse({"error": f"Недопустимое поле сортировки. Доступно: {', '.join(ALLOWED_SORT_FIELDS)}."}, status=400)
+
+    if query:
+        products = [p for p in products if query in p["name"].lower()]
+    if category:
+        products = [p for p in products if p["category"] == category]
+
+    products = sorted(products, key=lambda p: p[sort_by], reverse=(order == "desc"))
+
+    total      = len(products)
+    start      = (page - 1) * per_page
+    products   = products[start:start + per_page]
+
+    return JsonResponse({
+        "total":    total,
+        "page":     page,
+        "per_page": per_page,
+        "pages":    -(-total // per_page),  # ceil без math
+        "results":  products,
+    })
 
