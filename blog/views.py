@@ -144,3 +144,34 @@ def product_search(request):
         "results":  products,
     })
 
+@require_http_methods(["POST"])
+def bulk_action(request):
+    try:
+        body = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Невалидный JSON."}, status=400)
+
+    action  = body.get("action", "").strip()
+    ids     = body.get("ids", [])
+
+    ALLOWED_ACTIONS = {"delete", "archive", "publish"}
+
+    if action not in ALLOWED_ACTIONS:
+        return JsonResponse({"error": f"Недопустимое действие. Доступно: {', '.join(ALLOWED_ACTIONS)}."}, status=400)
+
+    if not isinstance(ids, list) or not ids:
+        return JsonResponse({"error": "ids должен быть непустым списком."}, status=422)
+
+    if not all(isinstance(i, int) for i in ids):
+        return JsonResponse({"error": "Все элементы ids должны быть целыми числами."}, status=422)
+
+    ids = list(set(ids))  # дедупликация
+
+    return JsonResponse({
+        "status":   "ok",
+        "action":   action,
+        "affected": len(ids),
+        "ids":      ids,
+    })
+
+
