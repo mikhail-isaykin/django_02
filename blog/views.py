@@ -175,3 +175,42 @@ def bulk_action(request):
     })
 
 
+@require_http_methods(["GET"])
+def activity_feed(request):
+    events = [
+        {"id": 1, "user": "admin",    "action": "created_post",   "target": "Пост #12", "timestamp": "2024-03-01T10:00:00"},
+        {"id": 2, "user": "john_doe", "action": "commented",      "target": "Пост #12", "timestamp": "2024-03-01T10:15:00"},
+        {"id": 3, "user": "admin",    "action": "deleted_comment", "target": "Комментарий #7", "timestamp": "2024-03-01T11:00:00"},
+        {"id": 4, "user": "john_doe", "action": "published_post",  "target": "Пост #13", "timestamp": "2024-03-02T09:30:00"},
+        {"id": 5, "user": "admin",    "action": "created_post",   "target": "Пост #14", "timestamp": "2024-03-02T14:00:00"},
+        {"id": 6, "user": "john_doe", "action": "commented",      "target": "Пост #14", "timestamp": "2024-03-03T08:45:00"},
+    ]
+
+    user        = request.GET.get("user", "").strip()
+    action      = request.GET.get("action", "").strip()
+    date_from   = request.GET.get("from", "").strip()
+    date_to     = request.GET.get("to", "").strip()
+    limit       = request.GET.get("limit", 10)
+
+    try:
+        limit = max(1, min(int(limit), 100))
+    except ValueError:
+        return JsonResponse({"error": "limit должен быть числом."}, status=400)
+
+    if user:
+        events = [e for e in events if e["user"] == user]
+    if action:
+        events = [e for e in events if e["action"] == action]
+    if date_from:
+        events = [e for e in events if e["timestamp"] >= date_from]
+    if date_to:
+        events = [e for e in events if e["timestamp"] <= date_to]
+
+    events = events[:limit]
+
+    return JsonResponse({
+        "count":  len(events),
+        "limit":  limit,
+        "events": events,
+    })
+
