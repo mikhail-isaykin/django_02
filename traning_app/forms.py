@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category, Order, Customer
+from .models import Product, Category, Order, Customer, OrderItem
 
 
 class ProductFilterForm(forms.Form):
@@ -97,4 +97,50 @@ class OrderCreateForm(forms.ModelForm):
             raise forms.ValidationError('Заказ нельзя оформить на покупателя младше 18 лет.')
 
         return customer
+
+
+class OrderItemForm(forms.ModelForm):
+    order = forms.ModelChoiceField(
+        queryset=Order.objects.filter(is_active=True).select_related('customer'),
+        empty_label='Выберите заказ',
+        label='Заказ',
+    )
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.select_related('category').order_by('category__name', 'name'),
+        empty_label='Выберите товар',
+        label='Товар',
+    )
+    quantity = forms.IntegerField(
+        min_value=1,
+        max_value=100,
+        initial=1,
+        label='Количество',
+    )
+
+    class Meta:
+        model  = OrderItem
+        fields = ['order', 'product', 'quantity']
+
+    def clean(self):
+        cleaned  = super().clean()
+        order   = cleaned.get('order')
+        product = cleaned.get('product')
+        quantity = cleaned.get('quantity')
+
+        if order and product and quantity:
+            already_in_order = OrderItem.objects.filter(
+                order=order, product=product
+            ).exists()
+
+            if already_in_order:
+                raise forms.ValidationError(
+                    f'Товар "{product.name}" уже есть в этом заказе.'
+                )
+
+            if product.price * quantity > order.total:
+                raise forms.ValidationError(
+                    f'Стоимость позиции превышает сумму заказа ({order.total} ₽).'
+                )
+
+        return cleaned
 
