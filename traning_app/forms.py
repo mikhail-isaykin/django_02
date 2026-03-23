@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Category
+from .models import Product, Category, Order, Customer
 
 
 class ProductFilterForm(forms.Form):
@@ -55,3 +55,46 @@ class ProductFilterForm(forms.Form):
             raise forms.ValidationError('Минимальная цена не может быть больше максимальной.')
 
         return cleaned
+
+
+class OrderCreateForm(forms.ModelForm):
+    customer = forms.ModelChoiceField(
+        queryset=Customer.objects.filter(orders__is_active=True).distinct(),
+        empty_label='Выберите покупателя',
+        label='Покупатель',
+    )
+    total = forms.DecimalField(
+        min_value=0,
+        max_digits=8,
+        decimal_places=2,
+        label='Сумма заказа',
+    )
+    is_active = forms.BooleanField(
+        required=False,
+        initial=True,
+        label='Активный заказ',
+    )
+
+    class Meta:
+        model  = Order
+        fields = ['customer', 'total', 'is_active']
+
+    def clean_total(self):
+        total = self.cleaned_data.get('total')
+
+        if total <= 0:
+            raise forms.ValidationError('Сумма заказа должна быть больше нуля.')
+
+        if total > 999999.99:
+            raise forms.ValidationError('Сумма заказа превышает допустимый лимит.')
+
+        return total
+
+    def clean_customer(self):
+        customer = self.cleaned_data.get('customer')
+
+        if customer and customer.age < 18:
+            raise forms.ValidationError('Заказ нельзя оформить на покупателя младше 18 лет.')
+
+        return customer
+
