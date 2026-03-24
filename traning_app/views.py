@@ -60,3 +60,11 @@ def product_detail_api(request, pk):
         })
     except Http404:
         return JsonResponse({'error': 'Продукт не найден.'}, status=404)
+
+
+def update_price(request, product_id):
+    if request.method == 'POST':
+        new_price = request.POST.get('new_price', product.price)
+        product = Product.objects.filter(pk=product_id).update('price'=new_price)
+        if product == 0:
+            return HttpResponse('Такого продукта не существует')
