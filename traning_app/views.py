@@ -1,7 +1,9 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Product, Category
 from django.template import Template, Context
 from decimal import Decimal
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 
 
 def product_list_by_category(request, category_name=None):
@@ -42,3 +44,19 @@ def  top_products(request):
         context = Context({'min_rating': min_rating, 'min_discount': min_discount, 'data': data})
         return HttpResponse(template.render(context))
     return HttpResponse('Продуктов нет')
+
+
+def product_detail_api(request, pk):
+    try:
+        data = get_object_or_404(Product, pk=pk)
+        return JsonResponse({
+            'id': data.pk,
+            'name': data.name,
+            'category': data.category.name,
+            'price': data.price,
+            'discount': data.discount,
+            'rating': data.rating,
+            'created_at': data.created_at.isoformat(),
+        })
+    except Http404:
+        return JsonResponse({'error': 'Продукт не найден.'}, status=404)
