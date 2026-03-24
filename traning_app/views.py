@@ -4,6 +4,7 @@ from django.template import Template, Context
 from decimal import Decimal
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from django.views.decorators.csrf import csrf_exempt
 
 
 def product_list_by_category(request, category_name=None):
@@ -62,9 +63,26 @@ def product_detail_api(request, pk):
         return JsonResponse({'error': 'Продукт не найден.'}, status=404)
 
 
+@csrf_exempt
 def update_price(request, product_id):
     if request.method == 'POST':
-        new_price = request.POST.get('new_price', product.price)
-        product = Product.objects.filter(pk=product_id).update('price'=new_price)
+        new_price = request.POST.get('new_price')
+        if not new_price:
+            return JsonResponse(
+                {'error': 'введите данные'},
+                  status=400
+            )
+        product = Product.objects.filter(pk=product_id).update(price=new_price)
         if product == 0:
-            return HttpResponse('Такого продукта не существует')
+            return JsonResponse(
+            {'error': 'такого продукта не существует'},
+              status=404
+        )
+        return JsonResponse(
+            {'success': True,
+             'new_price': new_price}
+        )
+    return JsonResponse(
+            {'error': 'отправьте POST запрос'},
+            status=405
+        )
