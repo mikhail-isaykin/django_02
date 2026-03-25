@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
+from django.views import View
 
 
 def product_list_by_category(request, category_name=None):
@@ -119,3 +120,8 @@ def product_list_by_price(request):
             })
         return HttpResponse(template.render(context))
     return HttpResponse('Продуктов нет')
+
+
+class HomePageCBV(View):
+    def get(self, request):
+        return HttpResponse('Добро пожаловать на главную страницу, используя Классовое Представление!')
