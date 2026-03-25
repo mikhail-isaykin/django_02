@@ -13,5 +13,6 @@ urlpatterns = [
     path('products/', include('traning_app.urls')),
     path('top-products/', include('traning_app.urls')),
     path('api/', include('traning_app.urls')),
-    path('cbv-home/', traning_views.HomePageCBV.as_view(), name='home_page')
+    path('cbv-home/', traning_views.HomePageCBV.as_view(), name='home_page'),
+    path('contact/cbv/', traning_views.ContactFormCBV.as_view(), name='contact_page'),
 ]

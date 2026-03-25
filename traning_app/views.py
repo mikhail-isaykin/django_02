@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
+from django.utils.decorators import method_decorator
 
 
 def product_list_by_category(request, category_name=None):
@@ -125,3 +126,16 @@ def product_list_by_price(request):
 class HomePageCBV(View):
     def get(self, request):
         return HttpResponse('Добро пожаловать на главную страницу, используя Классовое Представление!')
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ContactFormCBV(View):
+    def get(self, request):
+        return HttpResponse('Это страница контактов. Отправьте форму методом POST.')
+    
+
+    def post(self, request):
+        email = request.POST.get('email')
+        if email:
+            return HttpResponse(f'Спасибо за ваше сообщение от: {email}')
+        return HttpResponse('Пожалуйста, укажите ваш email.', status=400)
