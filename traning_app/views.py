@@ -86,3 +86,36 @@ def update_price(request, product_id):
             {'error': 'отправьте POST запрос'},
             status=405
         )
+
+
+def product_list_by_price(request):
+    filters = {}
+    min_price = request.GET.get('min_price')
+    if min_price:
+        filters['price__gte'] = min_price
+    max_price = request.GET.get('max_price')
+    if max_price:
+        filters['price__lte'] = max_price
+    data = Product.objects.filter(**filters)
+    if data:
+        html = '''
+            <h1>Продукты по цене</h1>
+            <p>Фильтры: {% if min_price and max_price %}От ${{ min_price }} До ${{ max_price }}
+                        {% elif min_price %}От ${{ min_price }}
+                        {% elif max_price %}До ${{ max_price }}
+                        {% else %}Фильтров нет
+                        {% endif %}</p>
+            <ul>
+            {% for product in data %}
+                <li>{{ product.name }} (Категория: {{ product.category.name }}, Цена: ${{ product.price }}, Рейтинг: {{ product.rating }})</li>
+            {% endfor %}
+            </ul>
+        '''
+        template = Template(html)
+        context = Context(
+            {'min_price': min_price,
+            'max_price': max_price,
+            'data': data
+            })
+        return HttpResponse(template.render(context))
+    return HttpResponse('Продуктов нет')
