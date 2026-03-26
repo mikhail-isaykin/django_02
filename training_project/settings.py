@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'traning_app',
     'blog.apps.BlogConfig',
+    'webshop.apps.WebshopConfig',
 ]
 
 MIDDLEWARE = [

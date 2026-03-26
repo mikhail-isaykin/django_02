@@ -7,6 +7,7 @@ from django.http import Http404
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 from django.utils.decorators import method_decorator
+from datetime import datetime
 
 
 def product_list_by_category(request, category_name=None):
@@ -17,7 +18,7 @@ def product_list_by_category(request, category_name=None):
                 <h1>Продукты в категории {{ category_name }}</h1>
                 <ul>
                 {% for product in data %}
-                    <li>{{ product.name }} (Цена: {{ product.price }}, Рейтинг: {{ product.rating }})</li>
+                    <li>{{ product.name }} (Цена: {{ product.price }})</li>
                 {% endfor %}
                 </ul>
             '''
@@ -139,3 +140,53 @@ class ContactFormCBV(View):
         if email:
             return HttpResponse(f'Спасибо за ваше сообщение от: {email}')
         return HttpResponse('Пожалуйста, укажите ваш email.', status=400)
+
+
+class ProductDetailCBV(View):
+    def get(self, request, product_id):
+        return HttpResponse(f'Вы просматриваете продукт с ID: {product_id}')
+
+
+class SystemInfoCBV(View):
+    def get(self, request):
+        data = {
+            'status': 'active',
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'message': 'Система работает нормально'
+        }
+        return JsonResponse(data, status=200)
+
+
+    def post(self, request):
+        return JsonResponse({
+            'error': 'POST-запросы не разрешены.',
+        }, status=405)
+
+
+class AuthCheckCBV(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not (auth_key := request.GET.get('auth_key')) or auth_key != 'secret123':
+            return HttpResponse('Доступ запрещен: Неверный или отсутствующий auth_key.',
+                                status=403)
+        return super().dispatch(request, *args, **kwargs)
+    
+
+    def get(self, request):
+        return HttpResponse('Привет! Вы успешно прошли проверку авторизации.')
+    
+
+class ProductRatingView(View):
+    def get(self, request, product_id, user_rating):
+        return HttpResponse(f'Продукт ID: {product_id}, получена оценка пользователя: {user_rating} (GET запрос)')
+    
+
+    def post(self, request, product_id):
+        try:
+            new_rating = int(request.POST.get('new_rating', 0))
+            if new_rating and 1 <= new_rating <= 5:
+                return HttpResponse(f'Продукт ID: {product_id}, новая оценка сохранена: {new_rating} (POST запрос)')
+            return HttpResponse('Укажите оценку от 1 до 5.',
+                                 status=400)
+        except (ValueError, TypeError):
+            return HttpResponse(f'Ошибка: Укажите корректную оценку от 1 до 5.',
+                                 status=400)

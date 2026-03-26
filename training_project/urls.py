@@ -15,4 +15,10 @@ urlpatterns = [
     path('api/', include('traning_app.urls')),
     path('cbv-home/', traning_views.HomePageCBV.as_view(), name='home_page'),
     path('contact/cbv/', traning_views.ContactFormCBV.as_view(), name='contact_page'),
+    path('products/cbv/<int:product_id>/', traning_views.ProductDetailCBV.as_view(), name='product_detail'),
+    path('api/status/cbv/', traning_views.SystemInfoCBV.as_view(), name='system_info'),
+    path('secure-page/cbv/', traning_views.AuthCheckCBV.as_view(), name='auth_check'),
+    path('products/<int:product_id>/rating/<int:user_rating>/', traning_views.ProductRatingView.as_view(), name='get_only'),
+    path('products/<int:product_id>/submit-rating/', traning_views.ProductRatingView.as_view(), name='post_only'),
+    path('webshop/', include('webshop.urls')),
 ]
