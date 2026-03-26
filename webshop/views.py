@@ -1,8 +1,10 @@
 from django.views import View
 from django.shortcuts import get_object_or_404
 from .models import Manufacturer, Product
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 
 class ManufacturerProductsView(View):
@@ -37,3 +39,36 @@ class ManufacturerProductsView(View):
                            'page': page})
         
         return HttpResponse(template.render(context))
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UpdateProductAvailabilityView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.method =='POST':
+            return JsonResponse({
+                'error': 'Метод не разрешен.'
+            }, status=405)
+        sku = kwargs['sku']
+        try:
+            product = Product.objects.get(sku=sku)
+        except Product.DoesNotExist:
+            return JsonResponse({
+                'error': 'Продукт не найден.'
+            }, status=404)
+        self.product = product
+        return super().dispatch(request, *args, **kwargs)
+    
+
+    def post(self, request, sku):
+        new_status = request.POST.get('status')
+        if new_status in ('true', 'false'):
+            self.product.is_available = new_status == 'true'
+            self.product.save()
+            return JsonResponse({
+                'message': 'Статус обновлен.',
+                'is_available': self.product.is_available
+            })
+        return JsonResponse({
+            'error': 'Недопустимое значение статуса.'
+            }, status=400)
+    

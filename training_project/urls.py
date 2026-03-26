@@ -21,4 +21,5 @@ urlpatterns = [
     path('products/<int:product_id>/rating/<int:user_rating>/', traning_views.ProductRatingView.as_view(), name='get_only'),
     path('products/<int:product_id>/submit-rating/', traning_views.ProductRatingView.as_view(), name='post_only'),
     path('webshop/', include('webshop.urls')),
+    path('api/products/', include('webshop.urls')),
 ]
