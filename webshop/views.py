@@ -5,6 +5,8 @@ from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+
 
 
 class ManufacturerProductsView(View):
@@ -71,4 +73,7 @@ class UpdateProductAvailabilityView(View):
         return JsonResponse({
             'error': 'Недопустимое значение статуса.'
             }, status=400)
-    
+
+
+class AboutUsView(TemplateView):
+    template_name = 'webshop/about.html'
