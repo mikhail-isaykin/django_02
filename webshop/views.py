@@ -6,7 +6,7 @@ from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-
+from datetime import date
 
 
 class ManufacturerProductsView(View):
@@ -77,3 +77,15 @@ class UpdateProductAvailabilityView(View):
 
 class AboutUsView(TemplateView):
     template_name = 'webshop/about.html'
+
+
+class WelcomeHomeView(TemplateView):
+    template_name='webshop/home.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_year'] = date.today().year
+        name = self.request.GET.get('name', 'Гость')
+        context['username'] =  name
+        return context
