@@ -80,7 +80,7 @@ class AboutUsView(TemplateView):
 
 
 class WelcomeHomeView(TemplateView):
-    template_name='webshop/home.html'
+    template_name = 'webshop/home.html'
 
 
     def get_context_data(self, **kwargs):
@@ -89,3 +89,13 @@ class WelcomeHomeView(TemplateView):
         name = self.request.GET.get('name', 'Гость')
         context['username'] =  name
         return context
+
+
+class FAQView(TemplateView):
+    template_name = 'webshop/faq.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['faq_items'] = [{'question': 'Что вы продаете?', 'answer': 'Электроника, книги, одежда.'},
+                                {'question': 'Как сделать заказ?', 'answer': 'Добавьте товары в корзину и оформите заказ.'}]
