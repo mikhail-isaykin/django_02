@@ -99,3 +99,18 @@ class FAQView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['faq_items'] = [{'question': 'Что вы продаете?', 'answer': 'Электроника, книги, одежда.'},
                                 {'question': 'Как сделать заказ?', 'answer': 'Добавьте товары в корзину и оформите заказ.'}]
+        return context
+
+
+class ProductDetailWithRelatedView(TemplateView):
+    template_name = 'webshop/product_detail_with_related.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product_sku = kwargs.get('product_sku')
+        product = get_object_or_404(Product, sku=product_sku)
+        related_products = Product.objects.filter(manufacturer=product.manufacturer).exclude(pk=product.pk)
+        context['product'] = product
+        context['related_products'] = related_products
+        return context
