@@ -14,4 +14,5 @@ urlpatterns = [
     path('old-products-url/<str:old_sku>/', views.OldProductURLRedirectView.as_view(), name='redirect'),
     path('products/search/', views.ProductSearchView.as_view(), name='product_search'),
     path('legacy-search/', views.LegacySearchRedirectView.as_view(), name='search_redirect'),
+    path('find-manufacturer/', views.ManufacturerLookupRedirectView.as_view(), name='find_manufacturer'),
 ]

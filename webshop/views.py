@@ -174,3 +174,10 @@ class LegacySearchRedirectView(RedirectView):
     query_string = True
 
 
+class ManufacturerLookupRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        name = self.request.GET.get('name')
+        manufacturer = Manufacturer.objects.filter(name__iexact=name).first()
+        if manufacturer:
+            return reverse('manufacturer_products', kwargs={'manufacturer_id': manufacturer.id})
+        return reverse('manufacturer_list')
