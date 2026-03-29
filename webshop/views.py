@@ -5,8 +5,9 @@ from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from datetime import date
+from django.db.models import Count, Q
 
 
 class ManufacturerProductsView(View):
@@ -114,3 +115,23 @@ class ProductDetailWithRelatedView(TemplateView):
         context['product'] = product
         context['related_products'] = related_products
         return context
+
+
+class ManufacturerListView(TemplateView):
+    template_name = 'webshop/manufacturer_list.html'
+
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        country = self.request.GET.get('country')
+        manufacturers = Manufacturer.objects.all()
+        if country:
+            manufacturers = manufacturers.filter(country__icontains=country)
+        manufacturers = manufacturers.annotate(active_product_count=Count('products', filter=Q(products__is_available=True)))
+        context['manufacturers'] = manufacturers
+        context['country'] = country
+        return context
+
+
+class RedirectToHomeView(RedirectView):
+    pattern_name = 'project_home'

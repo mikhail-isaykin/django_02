@@ -9,4 +9,6 @@ urlpatterns = [
     path('', views.WelcomeHomeView.as_view(), name='welcome_home'),
     path('faq/', views.FAQView.as_view(), name='faq'),
     path('products/<str:product_sku>/detail/', views.ProductDetailWithRelatedView.as_view(), name='product_detail'),
+    path('manufacturers/', views.ManufacturerListView.as_view(), name='manufacturer_list'),
+    path('old-home/', views.RedirectToHomeView.as_view(), name='old_home'),
 ]
