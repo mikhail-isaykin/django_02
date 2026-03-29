@@ -47,3 +47,22 @@ class OrderItem(models.Model):
         return f'{self.product.name} x{self.quantity}'
 
 
+class ProductSearchView(ListView):
+    model = Product
+    template_name = 'webshop/product_search.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        q = self.request.GET.get('q')
+        min_price = self.request.GET.get('min_price')
+        max_price = self.request.GET.get('max_price')
+
+        if q:
+            queryset = queryset.filter(name__icontains=q)
+        if min_price:
+            queryset = queryset.filter(price__gte=min_price)
+        if max_price:
+            queryset = queryset.filter(price__lte=max_price)
+
+        return queryset

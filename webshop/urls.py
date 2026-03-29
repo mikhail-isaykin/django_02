@@ -11,5 +11,6 @@ urlpatterns = [
     path('<str:product_sku>/detail/', views.ProductDetailWithRelatedView.as_view(), name='product_detail'),
     path('manufacturers/', views.ManufacturerListView.as_view(), name='manufacturer_list'),
     path('old-home/', views.RedirectToHomeView.as_view(), name='old_home'),
-    path('old-products-url/<str:old_sku>/', views.OldProductURLRedirectView.as_view(), name='redirect')
+    path('old-products-url/<str:old_sku>/', views.OldProductURLRedirectView.as_view(), name='redirect'),
+    path('products/search/', views.ProductSearchView.as_view(), name='product_search'),
 ]
