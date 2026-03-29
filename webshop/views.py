@@ -167,3 +167,10 @@ class ProductSearchView(ListView):
             queryset = queryset.filter(price__lte=max_price)
 
         return queryset
+
+
+class LegacySearchRedirectView(RedirectView):
+    pattern_name = 'product_search'
+    query_string = True
+
+
