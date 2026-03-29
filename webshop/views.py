@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, RedirectView
 from datetime import date
 from django.db.models import Count, Q
+from django.urls import reverse
 
 
 class ManufacturerProductsView(View):
@@ -135,3 +136,13 @@ class ManufacturerListView(TemplateView):
 
 class RedirectToHomeView(RedirectView):
     pattern_name = 'project_home'
+
+
+class OldProductURLRedirectView(RedirectView):
+    pattern_name = 'product_detail'
+    permanent = True
+
+
+    def get_redirect_url(self, *args, **kwargs):
+        old_sku = kwargs.get('old_sku')
+        return reverse('product_detail', kwargs={'product_sku': old_sku})
