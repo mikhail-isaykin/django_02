@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path('manufacturers/<int:manufacturer_id>/products/', views.ManufacturerProductsView.as_view(), name='manufacturer_products'),
+    #path('manufacturers/<int:manufacturer_id>/products/', views.ManufacturerProductsView.as_view(), name='manufacturer_products'),
     path('<str:sku>/availability/', views.UpdateProductAvailabilityView.as_view(), name='update_product'),
     path('about-us/', views.AboutUsView.as_view(), name='about_html'),
     path('', views.WelcomeHomeView.as_view(), name='welcome_home'),
@@ -18,5 +18,6 @@ urlpatterns = [
     path('product-status/<str:product_sku>/', views.ProductAvailabilityRedirectView.as_view(), name='product_status'),
     path('product-unavailable/', views.ProductUnavailableView.as_view(), name='product_unavailable'),
     path('manufacturers/<int:pk>/', views.ManufacturerDetailView.as_view(), name='manufacturers_detail'),
-    path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku')
+    path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
+    path('manufacturers/<int:pk>/products/', views.ManufacturerProductsDetailView.as_view(), name='manufacturers_all_products'),
 ]

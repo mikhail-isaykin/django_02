@@ -211,4 +211,15 @@ class ProductDetailBySkuView(DetailView):
     template_name = 'webshop/product_detail.html'
     slug_field = 'sku'
     slug_url_kwarg = 'product_sku'
-    
+
+
+class ManufacturerProductsDetailView(DetailView):
+    model = Manufacturer
+    template_name = 'webshop/manufacturer_detail_with_products.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        products = self.object.products.all()
+        context['products'] = products
+        return context
