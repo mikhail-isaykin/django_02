@@ -181,3 +181,21 @@ class ManufacturerLookupRedirectView(RedirectView):
         if manufacturer:
             return reverse('manufacturer_products', kwargs={'manufacturer_id': manufacturer.id})
         return reverse('manufacturer_list')
+
+
+class ProductUnavailableView(TemplateView):
+    template_name = 'webshop/product_unavailable.html'
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product_sku = self.request.GET.get('product_sku')
+        context['product_sku'] = product_sku
+        return context
+
+
+class ProductAvailabilityRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        product_sku = kwargs.get('product_sku')
+        product = Product.objects.filter(sku=product_sku).first()
+        if product and product.is_available == True and product.stock_quantity > 0:
+            return reverse('product_detail', kwargs={'product_sku': product_sku})
+        return f"{reverse('product_unavailable')}?product_sku={product_sku}"
