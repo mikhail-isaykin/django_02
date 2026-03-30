@@ -17,4 +17,5 @@ urlpatterns = [
     path('find-manufacturer/', views.ManufacturerLookupRedirectView.as_view(), name='find_manufacturer'),
     path('product-status/<str:product_sku>/', views.ProductAvailabilityRedirectView.as_view(), name='product_status'),
     path('product-unavailable/', views.ProductUnavailableView.as_view(), name='product_unavailable'),
+    path('manufacturers/<int:pk>/', views.ManufacturerDetailView.as_view(), name='manufacturers_detail')
 ]

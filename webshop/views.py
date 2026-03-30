@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, RedirectView, ListView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView
 from datetime import date
 from django.db.models import Count, Q
 from django.urls import reverse
@@ -199,3 +199,8 @@ class ProductAvailabilityRedirectView(RedirectView):
         if product and product.is_available == True and product.stock_quantity > 0:
             return reverse('product_detail', kwargs={'product_sku': product_sku})
         return f"{reverse('product_unavailable')}?product_sku={product_sku}"
+
+
+class ManufacturerDetailView(DetailView):
+    model = Manufacturer
+    template_name = 'webshop/manufacturer_detail.html'
