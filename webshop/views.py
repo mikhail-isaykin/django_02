@@ -227,7 +227,7 @@ class ManufacturerProductsDetailView(DetailView):
 
 class ProductDetailWithViewCount(DetailView):
     model = Product
-    template_name = 'webshop/product_detail'
+    template_name = 'webshop/product_detail.html'
     slug_field = 'sku'
     slug_url_kwarg = 'product_sku'
 
