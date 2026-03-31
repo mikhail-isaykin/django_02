@@ -7,8 +7,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, RedirectView, ListView, DetailView
 from datetime import date
-from django.db.models import Count, Q
+from django.db.models import Count, Q, F
 from django.urls import reverse
+from django.db.models.functions import Abs
 
 
 class ManufacturerProductsView(View):
@@ -238,4 +239,22 @@ class ProductDetailWithViewCount(DetailView):
         product_views = self.request.session.setdefault(product.sku, 0) + 1
         context['view_count_in_session'] = self.request.session[product.sku] = product_views
         self.request.session.modified = True
+        return context
+
+
+class ProductDetailWithSimilarPriceView(DetailView):
+    model = Product
+    template_name = 'webshop/product_detail.html'
+    slug_field = 'sku'
+    slug_url_kwarg = 'product_sku'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.object
+        similar_products = Product.objects.filter(manufacturer=product.manufacturer).exclude(pk=product.pk)
+        similar_price_products = similar_products.annotate(
+            diff_price=Abs(F('price') - product.price)
+            ).filter(diff_price__lte=750).order_by('diff_price')
+        context['similar_price_products'] = similar_price_products
         return context
