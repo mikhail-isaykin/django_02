@@ -223,3 +223,19 @@ class ManufacturerProductsDetailView(DetailView):
         products = self.object.products.all()
         context['products'] = products
         return context
+
+
+class ProductDetailWithViewCount(DetailView):
+    model = Product
+    template_name = 'webshop/product_detail'
+    slug_field = 'sku'
+    slug_url_kwarg = 'product_sku'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.object
+        product_views = self.request.session.setdefault(product.sku, 0) + 1
+        self.request.session[product.sku] = product_views
+        context[product_views] = self.request.session[product_views] = view_count_in_session
+        return context
