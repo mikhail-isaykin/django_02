@@ -284,3 +284,23 @@ class ProductFilteredListView(ListView):
         context = super().get_context_data(**kwargs)
         context['current_manufacturer_name'] = self.manufacturer_name
         return context
+
+
+class ProductSortableListView(ListView):
+    template_name = 'webshop/product_list_sortable.html'
+    context_object_name = 'product_list'
+    paginate_by = 15
+
+
+    def get_queryset(self):
+        valid_fields = ['name', '-name', 'price', '-price', 'stock_quantity', '-stock_quantity']
+        sort_by = self.request.GET.get('sort_by')
+        self.sort_by = 'name' if sort_by not in valid_fields else sort_by
+        queryset = Product.objects.all().order_by(self.sort_by)
+        return queryset
+    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_sort_by'] = self.sort_by
+        return context
