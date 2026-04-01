@@ -265,3 +265,22 @@ class ManufacturerListView(ListView):
     template_name = 'webshop/manufacturer_list.html'
     context_object_name = 'manufacturer_list'
     paginate_by = 5 
+
+
+class ProductFilteredListView(ListView):
+    template_name = 'webshop/product_list_filtered.html'
+    paginate_by = 5 
+
+
+    def get_queryset(self):
+        queryset = Product.objects.filter(is_available=True)
+        self.manufacturer_name = self.request.GET.get('manufacturer_name')
+        if self.manufacturer_name:
+            queryset = queryset.filter(manufacturer__name=self.manufacturer_name)
+        return queryset.order_by('name')
+    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_manufacturer_name'] = self.manufacturer_name
+        return context

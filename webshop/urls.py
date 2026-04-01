@@ -18,8 +18,9 @@ urlpatterns = [
     path('product-status/<str:product_sku>/', views.ProductAvailabilityRedirectView.as_view(), name='product_status'),
     path('product-unavailable/', views.ProductUnavailableView.as_view(), name='product_unavailable'),
     path('manufacturers/<int:pk>/', views.ManufacturerDetailView.as_view(), name='manufacturer_detail'),
-    path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
     path('manufacturers/<int:pk>/products/', views.ManufacturerProductsDetailView.as_view(), name='manufacturers_all_products'),
     path('products/counted/<str:product_sku>/', views.ProductDetailWithViewCount.as_view(), name='views_count'),
     path('products/similar/<str:product_sku>/', views.ProductDetailWithSimilarPriceView.as_view(), name='similar_products'),
+    path('products/filtered/', views.ProductFilteredListView.as_view(), name='products_filtered'),
+    path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
 ]

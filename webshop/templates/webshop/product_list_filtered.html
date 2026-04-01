@@ -1,0 +1,44 @@
+<h1>Список продуктов</h1>
+
+<form method="get" action="">
+    <label for="manufacturer_name">Фильтр по производителю:</label>
+    <input type="text" id="manufacturer_name" name="manufacturer_name" value="{{ current_manufacturer_name|default_if_none:'' }}">
+    <button type="submit">Применить фильтр</button>
+    {% if current_manufacturer_name %}<a href=".">Сбросить фильтр</a>{% endif %}
+</form>
+
+<hr>
+
+{% if product_list %} {# Используем product_list как context_object_name #}
+    <ul>
+        {% for product in product_list %}
+            <li>
+                <a href="{% url 'product_detail_by_sku' product_sku=product.sku %}">
+                    {{ product.name }}
+                </a>
+                ({{ product.manufacturer.name }}) - ${{ product.price }}
+            </li>
+        {% endfor %}
+    </ul>
+    {% if is_paginated %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">&laquo; первая</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">предыдущая</a>
+                {% endif %}
+
+                <span class="current">
+                    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">следующая</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">последняя &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+{% else %}
+    <p>Продуктов не найдено.</p>
+{% endif %}
