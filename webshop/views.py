@@ -119,7 +119,7 @@ class ProductDetailWithRelatedView(TemplateView):
         return context
 
 
-class ManufacturerListView(TemplateView):
+'''class ManufacturerListView(TemplateView):
     template_name = 'webshop/manufacturer_list.html'
 
 
@@ -132,7 +132,7 @@ class ManufacturerListView(TemplateView):
         manufacturers = manufacturers.annotate(active_product_count=Count('products', filter=Q(products__is_available=True)))
         context['manufacturers'] = manufacturers
         context['country'] = country
-        return context
+        return context'''
 
 
 class RedirectToHomeView(RedirectView):
@@ -258,3 +258,10 @@ class ProductDetailWithSimilarPriceView(DetailView):
             ).filter(diff_price__lte=750).order_by('diff_price')
         context['similar_price_products'] = similar_price_products
         return context
+
+
+class ManufacturerListView(ListView):
+    model = Manufacturer
+    template_name = 'webshop/manufacturer_list.html'
+    context_object_name = 'manufacturer_list'
+    paginate_by = 5 
