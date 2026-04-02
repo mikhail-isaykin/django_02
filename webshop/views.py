@@ -304,3 +304,17 @@ class ProductSortableListView(ListView):
         context = super().get_context_data(**kwargs)
         context['current_sort_by'] = self.sort_by
         return context
+
+
+class ManufacturerStatsListView(ListView):
+    template_name = 'webshop/manufacturer_list_with_stats.html'
+    context_object_name = 'manufacturer_list'
+    paginate_by = 5
+
+
+    def get_queryset(self):
+        queryset = Manufacturer.objects.annotate(
+            available_count = Count('products', filter=Q(products__is_available=True)),
+            unavailable_count = Count('products', filter=Q(products__is_available=False))
+        )
+        return queryset
