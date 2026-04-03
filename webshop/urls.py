@@ -33,4 +33,5 @@ urlpatterns = [
     path('feedback/thank-you/', views.FeedbackThankYouView.as_view(), name='feedback-thank-you'),
     path('newsletter/signup/', views.NewsletterSignupView.as_view(), name='newsletter_signup_page'),
     path('newsletter/success/', views.TemplateView.as_view(template_name='webshop/newsletter_success.html'), name='newsletter_success'),
+    path('shipping-calculator/', views.ShippingCalculatorView.as_view(), name='shipping_calculator_page'),
 ]

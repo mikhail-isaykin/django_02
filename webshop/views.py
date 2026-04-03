@@ -10,8 +10,8 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm, NewsletterSignupForm
-
+from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm
+from decimal import Decimal
 
 class ManufacturerProductsView(View):
     def get(self, request, manufacturer_id):
@@ -401,3 +401,27 @@ class NewsletterSignupView(FormView):
         email = form.cleaned_data['email']
         print(email)
         return super().form_valid(form)
+
+
+class ShippingCalculatorView(FormView):
+    form_class = ShippingCalculatorForm
+    template_name = 'webshop/shipping_calculator.html'
+    success_url = reverse_lazy('shipping_calculator_page')
+
+
+    def form_valid(self, form):
+        weight = form.cleaned_data['weight']
+        distance = form.cleaned_data['distance']
+        shipping_cost = (weight * 50) + (distance * 10)
+        self.request.session['shipping_cost'] = str(shipping_cost)
+        self.request.session.modified = True
+        return super().form_valid(form)
+    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        shipping_cost = Decimal(self.request.session.get('shipping_cost'))
+        context['shipping_cost'] = shipping_cost
+        if 'shipping_cost' in self.request.session:
+            del self.request.session['shipping_cost']
+        return context

@@ -36,3 +36,18 @@ class FeedbackForm(forms.Form):
 
 class NewsletterSignupForm(forms.Form):
     email = forms.EmailField(label="Ваш Email", help_text="Введите Email для подписки на рассылку.")
+
+
+class ShippingCalculatorForm(forms.Form):
+    weight = forms.DecimalField(
+        label="Вес товара (кг)",
+        min_value=0.1,
+        max_digits=5,
+        decimal_places=2,
+        help_text="Введите вес товара в килограммах (например, 1.5)."
+    )
+    distance = forms.IntegerField(
+        label="Расстояние доставки (км)",
+        min_value=1,
+        help_text="Введите расстояние в километрах."
+    )
