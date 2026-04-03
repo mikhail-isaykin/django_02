@@ -10,7 +10,7 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm
+from .forms import ContactForm, FeedbackForm, NewsletterSignupForm
 
 
 class ManufacturerProductsView(View):
@@ -389,3 +389,15 @@ class FeedbackThankYouView(TemplateView):
         rating = self.request.GET.get('rating')
         context['rating'] = rating
         return context
+
+
+class NewsletterSignupView(FormView):
+    form_class = NewsletterSignupForm
+    template_name = 'webshop/newsletter_signup.html'
+    success_url = reverse_lazy('newsletter_success')
+
+
+    def form_valid(self, form):
+        email = form.cleaned_data['email']
+        print(email)
+        return super().form_valid(form)
