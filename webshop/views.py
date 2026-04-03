@@ -10,7 +10,7 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm
+from .forms import ContactForm, FeedbackForm
 
 
 class ManufacturerProductsView(View):
@@ -359,3 +359,33 @@ class ContactFormView(FormView):
         message = form.cleaned_data['message']
         print(f'Отправлено сообщение от {name} ({email}): {message}')
         return super().form_valid(form)
+
+
+class FeedbackFormView(FormView):
+    form_class = FeedbackForm
+    template_name = 'webshop/feedback_form.html'
+
+
+    def form_valid(self, form):
+        self.form = form
+        rating = form.cleaned_data['rating']
+        comment = form.cleaned_data['comment']
+        email = form.cleaned_data['email']
+        print(f'Рейтинг: {rating}, Комментарий: {comment}, Почта: {email}')
+        return super().form_valid(form)
+
+
+    def get_success_url(self):
+        rating = self.form.cleaned_data.get('rating')
+        return reverse('feedback-thank-you') + f'?rating={rating}'
+    
+
+class FeedbackThankYouView(TemplateView):
+    template_name = 'webshop/feedback_thank_you.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        rating = self.request.GET.get('rating')
+        context['rating'] = rating
+        return context

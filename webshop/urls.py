@@ -29,4 +29,6 @@ urlpatterns = [
     path('manufacturers/stats/', views.ManufacturerStatsListView.as_view(), name='manufacturers_stats'),
     path('contact/', views.ContactFormView.as_view(), name='contact'),
     path('contact/success/', views.TemplateView.as_view(template_name='webshop/contact_success.html'), name='contact_success'),
+    path('feedback/', views.FeedbackFormView.as_view(), name='feedback_page'),
+    path('feedback/thank-you/', views.FeedbackThankYouView.as_view(), name='feedback-thank-you'),
 ]
