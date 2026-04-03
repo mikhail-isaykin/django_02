@@ -5,11 +5,12 @@ from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView
 from datetime import date
 from django.db.models import Count, Q, F
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
+from .forms import ContactForm
 
 
 class ManufacturerProductsView(View):
@@ -344,3 +345,17 @@ class ProductAdvancedFilterListView(ListView):
         context['current_available'] = self.available_raw
         context['current_min_price'] = self.min_price
         return context
+
+
+class ContactFormView(FormView):
+    form_class = ContactForm
+    template_name = 'webshop/contact_form.html'
+    success_url = reverse_lazy('contact_success')
+
+
+    def form_valid(self, form):
+        name = form.cleaned_data['name']
+        email = form.cleaned_data['email']
+        message = form.cleaned_data['message']
+        print(f'Отправлено сообщение от {name} ({email}): {message}')
+        return super().form_valid(form)

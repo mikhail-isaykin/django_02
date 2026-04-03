@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
@@ -26,4 +27,6 @@ urlpatterns = [
     path('products/advanced-filter/', views.ProductAdvancedFilterListView.as_view(), name='products_advanced_filter'),
     path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
     path('manufacturers/stats/', views.ManufacturerStatsListView.as_view(), name='manufacturers_stats'),
+    path('contact/', views.ContactFormView.as_view(), name='contact'),
+    path('contact/success/', views.TemplateView.as_view(template_name='webshop/contact_success.html'), name='contact_success'),
 ]

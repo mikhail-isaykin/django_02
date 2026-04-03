@@ -1,0 +1,9 @@
+<h1>Свяжитесь с нами</h1>
+
+<form method="post">
+    {% csrf_token %} {# ОБЯЗАТЕЛЬНО! #}
+
+    {{ form.as_p }}
+
+    <button type="submit">Отправить сообщение</button>
+</form>
