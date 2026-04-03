@@ -23,6 +23,7 @@ urlpatterns = [
     path('products/similar/<str:product_sku>/', views.ProductDetailWithSimilarPriceView.as_view(), name='similar_products'),
     path('products/filtered/', views.ProductFilteredListView.as_view(), name='products_filtered'),
     path('products/sortable/', views.ProductSortableListView.as_view(), name='products_sortable'),
+    path('products/advanced-filter/', views.ProductAdvancedFilterListView.as_view(), name='products_advanced_filter'),
     path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
     path('manufacturers/stats/', views.ManufacturerStatsListView.as_view(), name='manufacturers_stats'),
 ]

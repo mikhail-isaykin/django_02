@@ -318,3 +318,29 @@ class ManufacturerStatsListView(ListView):
             unavailable_count = Count('products', filter=Q(products__is_available=False))
         )
         return queryset
+
+
+class ProductAdvancedFilterListView(ListView):
+    template_name = 'webshop/product_list_advanced_filter.html'
+    context_object_name = 'product_list'
+    paginate_by = 10
+
+
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        self.available_raw = self.request.GET.get('available')
+        available = self.available_raw
+        if available in ('true', 'false'):
+            available = available == 'true'
+        self.min_price = self.request.GET.get('min_price', 0)
+        if isinstance(available, bool):
+            queryset = queryset.filter(is_available=available)
+        queryset = queryset.filter(price__gte=self.min_price)
+        return queryset
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_available'] = self.available_raw
+        context['current_min_price'] = self.min_price
+        return context
