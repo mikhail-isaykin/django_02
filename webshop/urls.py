@@ -43,4 +43,6 @@ urlpatterns = [
     path('register/success/', views.RegistrationSuccessView.as_view(), name='register_success_page'),
     path('order/custom/', views.CustomProductOrderView.as_view(), name='custom_order_page'),
     path('order/confirm/', views.OrderConfirmationView.as_view(), name='order_confirmation_page'),
+    path('products/add/', views.ProductCreateView.as_view(), name='product_create_page'),
+    path('products/add/success/', views.ProductCreatedSuccessView.as_view(), name='product_success_page'),
 ]

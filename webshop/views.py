@@ -15,7 +15,7 @@ from django.utils.http import urlencode
 from .forms import (
     ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm,
     ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm,
-    CustomProductOrderForm
+    CustomProductOrderForm, ProductCreateForm
 )
 
 
@@ -579,4 +579,50 @@ class OrderConfirmationView(TemplateView):
         context['desired_color'] = self.request.GET.get('desired_color')
         context['quantity'] = self.request.GET.get('quantity')
         return context
+
+
+class ProductCreateView(FormView):
+    form_class = ProductCreateForm
+    template_name = 'webshop/product_create_form.html'
+
+
+    def form_valid(self, form):
+        name = form.cleaned_data['name']
+        manufacturer = form.cleaned_data['manufacturer']
+        sku = form.cleaned_data['sku']
+        description = form.cleaned_data['description']
+        price = form.cleaned_data['price']
+        stock_quantity = form.cleaned_data['stock_quantity']
+        is_available = stock_quantity > 0
+        self.data = {
+            'name': name,
+            'manufacturer': manufacturer,
+            'sku': sku,
+            'description': description,
+            'price': price,
+            'stock_quantity': stock_quantity,
+            'is_available': is_available
+            }
+        new_product = Product.objects.create(**self.data)
+        print(f'--- Новый товар создан ---')
+        print(f'Название: {new_product.name}')
+        print(f'Производитель: {new_product.manufacturer.name}')
+        print(f'SKU: {new_product.sku}')
+        print(f'Цена: {new_product.price}')
+        print(f'Количество: {new_product.stock_quantity}')
+        print(f'--------------------------')
+        return super().form_valid(form)
     
+
+    def get_success_url(self):
+        return reverse('product_success_page') + f'?{urlencode(self.data)}'
+
+
+class ProductCreatedSuccessView(TemplateView):
+    template_name = 'webshop/product_created_success.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({key: self.request.GET[key] for key in self.request.GET if key in ('name', 'manufacturer', 'sku', 'price', 'stock_quantity')})
+        return context
