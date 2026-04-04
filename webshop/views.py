@@ -10,7 +10,7 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm, AskQuestionForm, RectangleAreaForm
+from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm
 from decimal import Decimal
 
 class ManufacturerProductsView(View):
@@ -500,4 +500,33 @@ class RectangleAreaResultView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['area'] = self.request.GET.get('area')
+        return context
+
+
+class UserRegistrationView(FormView):
+    form_class = UserRegistrationForm
+    template_name = 'webshop/register_user_form.html'
+
+
+    def form_valid(self, form):
+        self.username = form.cleaned_data['username']
+        email = form.cleaned_data['email']
+        print(f'--- Новый пользователь зарегистрирован ---')
+        print(f'Имя пользователя: {self.username}')
+        print(f'Email: {email}')
+        print(f'----------------------------------------')
+        return super().form_valid(form)
+    
+
+    def get_success_url(self):
+        return reverse('register_success_page') + f'?username={self.username}'
+
+
+class RegistrationSuccessView(TemplateView):
+    template_name = 'webshop/registration_success.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['username'] = self.request.GET.get('username')
         return context
