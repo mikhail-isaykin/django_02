@@ -99,3 +99,17 @@ class UserRegistrationForm(forms.Form):
             self.add_error('password_confirm', "Пароли не совпадают.")
 
         return cleaned_data
+
+
+class CustomProductOrderForm(forms.Form):
+    COLOR_CHOICES = [
+        ('red', 'Красный'),
+        ('blue', 'Синий'),
+        ('green', 'Зеленый'),
+        ('black', 'Черный'),
+        ('white', 'Белый'),
+    ]
+
+    product_name = forms.CharField(label="Название продукта", max_length=255)
+    desired_color = forms.ChoiceField(label="Желаемый цвет", choices=COLOR_CHOICES)
+    quantity = forms.IntegerField(label="Количество", min_value=1)

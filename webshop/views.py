@@ -10,8 +10,14 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm
 from decimal import Decimal
+from django.utils.http import urlencode
+from .forms import (
+    ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm,
+    ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm,
+    CustomProductOrderForm
+)
+
 
 class ManufacturerProductsView(View):
     def get(self, request, manufacturer_id):
@@ -530,3 +536,47 @@ class RegistrationSuccessView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['username'] = self.request.GET.get('username')
         return context
+
+
+class CustomProductOrderView(FormView):
+    form_class = CustomProductOrderForm
+    template_name = 'webshop/custom_order_form.html'
+
+
+    def form_valid(self, form):
+        self.form = form
+        product_name = form.cleaned_data['product_name']
+        desired_color_en = form.cleaned_data['desired_color']
+        desired_color_ru = dict(form.COLOR_CHOICES).get(desired_color_en)
+        quantity = form.cleaned_data['quantity']
+        print(f'--- Новый заказ уникального продукта ---')
+        print(f'Название: {product_name}')
+        print(f'Цвет: {desired_color_ru} (ключ: {desired_color_en})')
+        print(f'Количество: {quantity}')
+        print(f'----------------------------------------')
+        return super().form_valid(form)
+
+
+    def get_success_url(self):
+        product_name = self.form.cleaned_data['product_name']
+        desired_color = dict(self.form.COLOR_CHOICES).get(self.form.cleaned_data['desired_color'])
+        quantity = self.form.cleaned_data['quantity']
+        params = {
+            'product_name': product_name,
+            'desired_color': desired_color,
+            'quantity': quantity
+        }
+        return reverse('order_confirmation_page') + f'?{urlencode(params)}'
+
+
+class OrderConfirmationView(TemplateView):
+    template_name = 'webshop/order_confirmation.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_name'] = self.request.GET.get('product_name')
+        context['desired_color'] = self.request.GET.get('desired_color')
+        context['quantity'] = self.request.GET.get('quantity')
+        return context
+    
