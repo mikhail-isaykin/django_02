@@ -10,7 +10,7 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm
+from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm, AskQuestionForm
 from decimal import Decimal
 
 class ManufacturerProductsView(View):
@@ -452,3 +452,24 @@ class ProductSearchView(FormView):
         products = Product.objects.filter(**filters)
         context['products'] = products
         return context
+
+
+class AskQuestionView(FormView):
+    form_class = AskQuestionForm
+    template_name = 'webshop/ask_question_form.html'
+    success_url = reverse_lazy('ask_sent_page')
+
+
+    def form_valid(self, form):
+        name = form.cleaned_data['name']
+        email = form.cleaned_data['email']
+        question = form.cleaned_data['question']
+        print(f'--- Новый вопрос ---')
+        print(f'От: {name} <{email}>')
+        print(f'Вопрос: {question}')
+        print(f'--------------------')
+        return super().form_valid(form)
+
+
+class QuestionSentView(TemplateView):
+    template_name = 'webshop/question_sent.html'

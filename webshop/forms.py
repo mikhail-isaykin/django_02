@@ -71,3 +71,9 @@ class ProductSearchForm(forms.Form):
         min_value=Decimal('0.01'), # Минимальная цена должна быть положительной
         help_text="Найти товары дешевле или равные указанной цене."
     )
+
+
+class AskQuestionForm(forms.Form):
+    name = forms.CharField(label="Ваше имя", max_length=100)
+    email = forms.EmailField(label="Ваш Email")
+    question = forms.CharField(label="Ваш вопрос", widget=forms.Textarea)
