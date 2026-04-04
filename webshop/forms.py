@@ -1,4 +1,6 @@
 from django import forms
+from decimal import Decimal
+
 
 class ContactForm(forms.Form):
     name = forms.CharField(label="Ваше имя", max_length=100, help_text="Пожалуйста, введите ваше полное имя.")
@@ -11,6 +13,7 @@ class ContactForm(forms.Form):
         if len(message) < 10:
             raise forms.ValidationError("Сообщение должно быть не менее 10 символов.")
         return message
+
 
 class FeedbackForm(forms.Form):
     RATING_CHOICES = [
@@ -50,4 +53,21 @@ class ShippingCalculatorForm(forms.Form):
         label="Расстояние доставки (км)",
         min_value=1,
         help_text="Введите расстояние в километрах."
+    )
+
+
+class ProductSearchForm(forms.Form):
+    query = forms.CharField(
+        label="Название товара",
+        max_length=200,
+        required=False,
+        help_text="Введите часть названия товара."
+    )
+    max_price = forms.DecimalField(
+        label="Максимальная цена",
+        max_digits=10,
+        decimal_places=2,
+        required=False,
+        min_value=Decimal('0.01'), # Минимальная цена должна быть положительной
+        help_text="Найти товары дешевле или равные указанной цене."
     )

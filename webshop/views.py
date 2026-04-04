@@ -10,7 +10,7 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm
+from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm
 from decimal import Decimal
 
 class ManufacturerProductsView(View):
@@ -150,7 +150,7 @@ class OldProductURLRedirectView(RedirectView):
         return reverse('product_detail', kwargs={'product_sku': old_sku})
 
 
-class ProductSearchView(ListView):
+'''class ProductSearchView(ListView):
     model = Product
     template_name = 'webshop/product_search.html'
     context_object_name = 'products'
@@ -168,7 +168,7 @@ class ProductSearchView(ListView):
         if max_price:
             queryset = queryset.filter(price__lte=max_price)
 
-        return queryset
+        return queryset'''
 
 
 class LegacySearchRedirectView(RedirectView):
@@ -424,4 +424,31 @@ class ShippingCalculatorView(FormView):
         context['shipping_cost'] = shipping_cost
         if 'shipping_cost' in self.request.session:
             del self.request.session['shipping_cost']
+        return context
+
+
+class ProductSearchView(FormView):
+    form_class = ProductSearchForm
+    template_name = 'webshop/product_search.html'
+    
+
+    def get_form_kwargs(self, **kwargs):
+        kwargs = super().get_form_kwargs(**kwargs)
+        kwargs['data'] = self.request.GET
+        return kwargs
+    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = context['form']
+        filters = {}
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            if query is not None:
+                filters['name__icontains'] = query
+            max_price = form.cleaned_data['max_price']
+            if max_price is not None:
+                filters['price__lte'] = max_price
+        products = Product.objects.filter(**filters)
+        context['products'] = products
         return context
