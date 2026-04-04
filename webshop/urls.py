@@ -31,10 +31,12 @@ urlpatterns = [
     path('contact/', views.ContactFormView.as_view(), name='contact'),
     path('contact/success/', views.TemplateView.as_view(template_name='webshop/contact_success.html'), name='contact_success'),
     path('feedback/', views.FeedbackFormView.as_view(), name='feedback_page'),
-    path('feedback/thank-you/', views.FeedbackThankYouView.as_view(), name='feedback-thank-you'),
+    path('feedback/thank-you/', views.FeedbackThankYouView.as_view(), name='feedback_thank_you'),
     path('newsletter/signup/', views.NewsletterSignupView.as_view(), name='newsletter_signup_page'),
     path('newsletter/success/', views.TemplateView.as_view(template_name='webshop/newsletter_success.html'), name='newsletter_success'),
     path('shipping-calculator/', views.ShippingCalculatorView.as_view(), name='shipping_calculator_page'),
     path('ask/', views.AskQuestionView.as_view(), name='ask_question_page'),
-    path('ask/sent/', views.QuestionSentView.as_view(), name='ask_sent_page')
+    path('ask/sent/', views.QuestionSentView.as_view(), name='ask_sent_page'),
+    path('area/calculate/', views.RectangleAreaView.as_view(), name='calculate_area_page'),
+    path('area/result/', views.RectangleAreaResultView.as_view(), name='area_result')
 ]

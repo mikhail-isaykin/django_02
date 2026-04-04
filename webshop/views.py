@@ -10,7 +10,7 @@ from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
-from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm, AskQuestionForm
+from .forms import ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm, ProductSearchForm, AskQuestionForm, RectangleAreaForm
 from decimal import Decimal
 
 class ManufacturerProductsView(View):
@@ -377,7 +377,7 @@ class FeedbackFormView(FormView):
 
     def get_success_url(self):
         rating = self.form.cleaned_data.get('rating')
-        return reverse('feedback-thank-you') + f'?rating={rating}'
+        return reverse('feedback_thank_you') + f'?rating={rating}'
     
 
 class FeedbackThankYouView(TemplateView):
@@ -473,3 +473,31 @@ class AskQuestionView(FormView):
 
 class QuestionSentView(TemplateView):
     template_name = 'webshop/question_sent.html'
+
+
+class RectangleAreaView(FormView):
+    form_class = RectangleAreaForm
+    template_name = 'webshop/rectangle_area_form.html'
+
+
+    def form_valid(self, form):
+        length = form.cleaned_data['length']
+        width = form.cleaned_data['width']
+        self.area = length * width
+        print(f'--- Расчет площади ---')
+        print(f'Длина: {length}, Ширина: {width}, Площадь: {self.area}')
+        print(f'----------------------')
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse('area_result') + f'?area={self.area}'
+
+
+class RectangleAreaResultView(TemplateView):
+    template_name = 'webshop/rectangle_area_result.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['area'] = self.request.GET.get('area')
+        return context
