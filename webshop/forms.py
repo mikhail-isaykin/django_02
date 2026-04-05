@@ -116,8 +116,29 @@ class CustomProductOrderForm(forms.Form):
     quantity = forms.IntegerField(label="Количество", min_value=1)
 
 
-class ProductCreateForm(forms.Form):
-    name = forms.CharField(label="Название товара", max_length=200)
+class ProductCreateForm(forms.ModelForm):
+
+    class Meta:
+        model = Product # Указываем модель
+        fields = ['name', 'manufacturer', 'sku', 'description', 'price', 'stock_quantity'] # Поля, которые будут в форме
+        # Если вы хотите, можете добавить verbose_name или help_text здесь,
+        # или переопределить виджеты, как в обычной форме.
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
+
+    # Валидация уникальности SKU все еще нужна, так как ModelForm не гарантирует это из коробки для CharField
+    # (Хотя unique=True на модели обрабатывает это на уровне БД, но лучше иметь валидацию на форме)
+    def clean_sku(self):
+        sku = self.cleaned_data['sku']
+        # Проверяем, существует ли Product с таким SKU, исключая текущий (если это был бы EditView)
+        # Для CreateView, просто проверяем на существование
+        if Product.objects.filter(sku=sku).exists():
+            raise forms.ValidationError("Товар с таким артикулом уже существует.")
+        return sku
+
+
+    '''name = forms.CharField(label="Название товара", max_length=200)
     manufacturer = forms.ModelChoiceField(
         queryset=Manufacturer.objects.all(),
         label="Производитель"
@@ -132,7 +153,7 @@ class ProductCreateForm(forms.Form):
         sku = self.cleaned_data['sku']
         if Product.objects.filter(sku=sku).exists():
             raise forms.ValidationError("Товар с таким артикулом уже существует.")
-        return sku
+        return sku'''
 
 
 class ManufacturerCreateForm(forms.ModelForm):

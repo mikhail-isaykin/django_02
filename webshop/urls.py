@@ -46,4 +46,5 @@ urlpatterns = [
     path('products/add/', views.ProductCreateView.as_view(), name='product_create_page'),
     path('products/add/success/', views.ProductCreatedSuccessView.as_view(), name='product_success_page'),
     path('manufacturers/add/', views.ManufacturerCreateView.as_view(), name='manufacturers_add'),
+    path('products/add-initial/', views.ProductCreateWithInitialView.as_view(), name='products_add_initial'),
 ]

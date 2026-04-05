@@ -639,3 +639,33 @@ class ManufacturerCreateView(CreateView):
         paginator = view.get_paginator(Manufacturer.objects.all(), ManufacturerListView.paginate_by)
         last_page = paginator.num_pages
         return reverse('manufacturers_list') + f'?page={last_page}'
+
+
+class ProductCreateWithInitialView(CreateView):
+    model = Product
+    form_class = ProductCreateForm
+    template_name = 'webshop/product_create_form.html'
+
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['stock_quantity'] = 10
+        return initial
+    
+
+    def form_valid(self, form):
+        new_product = form.instance
+        self.data = {
+            'name': new_product.name,
+            'manufacturer': new_product.manufacturer,
+            'sku': new_product.sku,
+            'description': new_product.description,
+            'price': str(new_product.price),
+            'stock_quantity': new_product.stock_quantity,
+            }
+        new_product.is_available = new_product.stock_quantity > 0
+        return super().form_valid(form)
+  
+
+    def get_success_url(self):
+        return reverse('product_success_page') + f'?{urlencode(self.data)}'
