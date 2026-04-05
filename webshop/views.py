@@ -1,21 +1,26 @@
 from django.views import View
+from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from .models import Manufacturer, Product
 from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView
 from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
 from django.db.models.functions import Abs
 from decimal import Decimal
 from django.utils.http import urlencode
+from django.views.generic import (
+    TemplateView, RedirectView, ListView,
+    DetailView, FormView, CreateView,
+    UpdateView
+)
 from .forms import (
     ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm,
     ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm,
-    CustomProductOrderForm, ProductCreateForm, ManufacturerCreateForm,
+    CustomProductOrderForm, ProductCreateForm, ManufacturerForm,
     ProductCreateNoManufacturerForm,
 )
 
@@ -631,7 +636,7 @@ class ProductCreatedSuccessView(TemplateView):
 
 class ManufacturerCreateView(CreateView):
     model = Manufacturer
-    form_class = ManufacturerCreateForm
+    form_class = ManufacturerForm
     template_name = 'webshop/manufacturer_create_form.html'
 
 
@@ -696,3 +701,31 @@ class ProductCreateDefaultManufacturerView(CreateView):
 
     def get_success_url(self):
         return reverse('product_success_page') + f'?{urlencode(self.data)}'
+
+
+class ManufacturerUpdateView(UpdateView):
+    model = Manufacturer
+    form_class = ManufacturerForm
+    template_name = 'webshop/manufacturer_update_form.html'
+
+
+    def form_valid(self, form):
+        messages.success(self.request, 'производитель успешно обновлен')
+        self.name = form.cleaned_data['name']
+        return super().form_valid(form)
+    
+
+    def get_success_url(self):
+        return reverse('manufacturer_updated_success_page') + f'?name={self.name}'
+
+
+class ManufacturerUpdatedSuccessView(TemplateView):
+    template_name = 'webshop/manufacturer_updated_success.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        manufacturer_name = self.request.GET.get('name')
+        context['manufacturer_name'] = manufacturer_name
+        return context
+    

@@ -156,10 +156,19 @@ class ProductCreateForm(forms.ModelForm):
         return sku'''
 
 
-class ManufacturerCreateForm(forms.ModelForm):
+class ManufacturerForm(forms.ModelForm):
     class Meta:
         model = Manufacturer
         fields = ['name']
+
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        # Ваша логика для проверки уникальности имени, исключая текущий объект
+        # self.instance будет содержать объект Manufacturer, если форма связана с существующим объектом.
+        if Manufacturer.objects.filter(name=name).exclude(pk=self.instance.pk if self.instance else None).exists():
+            raise forms.ValidationError("Производитель с таким названием уже существует.")
+        return name
 
 
 class ProductCreateNoManufacturerForm(forms.ModelForm):

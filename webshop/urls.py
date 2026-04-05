@@ -48,4 +48,6 @@ urlpatterns = [
     path('products/add-initial/', views.ProductCreateWithInitialView.as_view(), name='products_add_initial'),
     path('products/add-default-manufacturer/', views.ProductCreateDefaultManufacturerView.as_view(), name='products_add_default_manufacturer'),
     path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
+    path('manufacturers/<int:pk>/edit/', views.ManufacturerUpdateView.as_view(), name='manufacturer_update_page'),
+    path('manufacturers/edit/success/', views.ManufacturerUpdatedSuccessView.as_view(), name='manufacturer_updated_success_page')
 ]
