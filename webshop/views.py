@@ -5,7 +5,7 @@ from django.http import HttpResponse, JsonResponse
 from django.template import Template, Context
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView
+from django.views.generic import TemplateView, RedirectView, ListView, DetailView, FormView, CreateView
 from datetime import date
 from django.db.models import Count, Q, F
 from django.urls import reverse, reverse_lazy
@@ -15,7 +15,7 @@ from django.utils.http import urlencode
 from .forms import (
     ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm,
     ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm,
-    CustomProductOrderForm, ProductCreateForm
+    CustomProductOrderForm, ProductCreateForm, ManufacturerCreateForm
 )
 
 
@@ -271,7 +271,7 @@ class ManufacturerListView(ListView):
     model = Manufacturer
     template_name = 'webshop/manufacturer_list.html'
     context_object_name = 'manufacturer_list'
-    paginate_by = 5 
+    paginate_by = 5
 
 
 class ProductFilteredListView(ListView):
@@ -626,3 +626,16 @@ class ProductCreatedSuccessView(TemplateView):
         context = super().get_context_data(**kwargs)
         context.update({key: self.request.GET[key] for key in self.request.GET if key in ('name', 'manufacturer', 'sku', 'price', 'stock_quantity')})
         return context
+
+
+class ManufacturerCreateView(CreateView):
+    model = Manufacturer
+    form_class = ManufacturerCreateForm
+    template_name = 'webshop/manufacturer_create_form.html'
+
+
+    def get_success_url(self):
+        view = ManufacturerListView()
+        paginator = view.get_paginator(Manufacturer.objects.all(), ManufacturerListView.paginate_by)
+        last_page = paginator.num_pages
+        return reverse('manufacturers_list') + f'?page={last_page}'

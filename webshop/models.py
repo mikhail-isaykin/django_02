@@ -8,6 +8,10 @@ class Manufacturer(models.Model):
     founded_year = models.IntegerField(blank=True, null=True)
 
 
+    class Meta:
+        ordering = ['id']
+
+
     def __str__(self):
         return self.name
 

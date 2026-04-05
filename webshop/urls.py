@@ -45,4 +45,5 @@ urlpatterns = [
     path('order/confirm/', views.OrderConfirmationView.as_view(), name='order_confirmation_page'),
     path('products/add/', views.ProductCreateView.as_view(), name='product_create_page'),
     path('products/add/success/', views.ProductCreatedSuccessView.as_view(), name='product_success_page'),
+    path('manufacturers/add/', views.ManufacturerCreateView.as_view(), name='manufacturers_add'),
 ]
