@@ -15,7 +15,8 @@ from django.utils.http import urlencode
 from .forms import (
     ContactForm, FeedbackForm, NewsletterSignupForm, ShippingCalculatorForm,
     ProductSearchForm, AskQuestionForm, RectangleAreaForm, UserRegistrationForm,
-    CustomProductOrderForm, ProductCreateForm, ManufacturerCreateForm
+    CustomProductOrderForm, ProductCreateForm, ManufacturerCreateForm,
+    ProductCreateNoManufacturerForm,
 )
 
 
@@ -666,6 +667,32 @@ class ProductCreateWithInitialView(CreateView):
         new_product.is_available = new_product.stock_quantity > 0
         return super().form_valid(form)
   
+
+    def get_success_url(self):
+        return reverse('product_success_page') + f'?{urlencode(self.data)}'
+
+
+class ProductCreateDefaultManufacturerView(CreateView):
+    model = Product
+    form_class = ProductCreateNoManufacturerForm
+    template_name = 'webshop/product_create_form.html'
+
+
+    def form_valid(self, form):
+        new_product = form.instance
+        manufacturer = Manufacturer.objects.get_or_create(name='Acme Corp')[0]
+        new_product.manufacturer = manufacturer
+        self.data = {
+            'name': new_product.name,
+            'sku': new_product.sku,
+            'description': new_product.description,
+            'price': str(new_product.price),
+            'stock_quantity': new_product.stock_quantity,
+            }
+        self.data.update({'manufacturer': manufacturer})
+        new_product.is_available = new_product.stock_quantity > 0
+        return super().form_valid(form)
+    
 
     def get_success_url(self):
         return reverse('product_success_page') + f'?{urlencode(self.data)}'

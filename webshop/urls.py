@@ -26,7 +26,6 @@ urlpatterns = [
     path('products/sortable/', views.ProductSortableListView.as_view(), name='products_sortable'),
     path('products/advanced-filter/', views.ProductAdvancedFilterListView.as_view(), name='products_advanced_filter'),
     path('products/search', views.ProductSearchView.as_view(), name='products_search'),
-    path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
     path('manufacturers/stats/', views.ManufacturerStatsListView.as_view(), name='manufacturers_stats'),
     path('contact/', views.ContactFormView.as_view(), name='contact'),
     path('contact/success/', views.TemplateView.as_view(template_name='webshop/contact_success.html'), name='contact_success'),
@@ -47,4 +46,6 @@ urlpatterns = [
     path('products/add/success/', views.ProductCreatedSuccessView.as_view(), name='product_success_page'),
     path('manufacturers/add/', views.ManufacturerCreateView.as_view(), name='manufacturers_add'),
     path('products/add-initial/', views.ProductCreateWithInitialView.as_view(), name='products_add_initial'),
+    path('products/add-default-manufacturer/', views.ProductCreateDefaultManufacturerView.as_view(), name='products_add_default_manufacturer'),
+    path('products/<str:product_sku>/', views.ProductDetailBySkuView.as_view(), name='product_detail_by_sku'),
 ]

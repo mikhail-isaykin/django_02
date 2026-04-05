@@ -160,3 +160,15 @@ class ManufacturerCreateForm(forms.ModelForm):
     class Meta:
         model = Manufacturer
         fields = ['name']
+
+
+class ProductCreateNoManufacturerForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'sku', 'description', 'price', 'stock_quantity'] # manufacturer удален
+
+    def clean_sku(self):
+        sku = self.cleaned_data['sku']
+        if Product.objects.filter(sku=sku).exists():
+            raise forms.ValidationError("Товар с таким артикулом уже существует.")
+        return sku
