@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='categories/', blank=True, null=True)
     is_active = models.BooleanField(default=False)
@@ -37,7 +37,7 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=100)
     sku = models.CharField(max_length=15, unique=True)
-    slug = models.SlugField()
+    slug = models.SlugField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     price = models.DecimalField(
