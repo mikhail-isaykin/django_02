@@ -11,7 +11,7 @@ class HomePageView(TemplateView):
         context = super().get_context_data(**kwargs)
         categories = Category.objects.filter(is_active=True)
         selected_category = self.request.get.GET('category')
-        products = Product.objects.filter(category_name=selected_category)
+        products = Product.objects.filter(category_slug=selected_category, is_active=True)
         context['categories'] = categories
         context['selected_category'] = selected_category
         context['products'] = products
