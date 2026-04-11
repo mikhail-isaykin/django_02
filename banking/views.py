@@ -68,19 +68,19 @@ class TransferMoneyView(LoginRequiredMixin, View):
 
         try:
             with transaction.atomic():
-                sender_bank_account = BankAccount.objects.select_for_update().get(user=request.user) # отправитель
+                sender_bank_account = get_object_or_404(BankAccount.objects.select_for_update(), user=request.user) # отправитель
                 if sender_bank_account.balance < amount:
                     messages.error(request, 'Недостаточно средств, пополните баланс')
                     return redirect()
-                recipient_bank_account = BankAccount.objects.select_for_update().get(**filters) # получатель
+                recipient_bank_account = get_object_or_404(BankAccount.objects.select_for_update(), **filters) # получатель
                 sender_bank_account.balance -= amount
                 sender_bank_account.save()
                 recipient_bank_account.balance += amount
                 recipient_bank_account.save()
                 messages.success(request, ...)
                 return redirect(...)
-        except (InvalidOperation, BankAccount.DoesNotExist) as error:
-            messages.error(request, 'Введите корректную сумму больше нуля.')
+        except Exception as error:
+            messages.error(request, error)
             return redirect(....)
         
 

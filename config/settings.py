@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'products.apps.ProductsConfig',
     'cart.apps.CartConfig',
     'accounts.apps.AccountsConfig',
+    'banking.apps.BankingConfig',
 ]
 
 MIDDLEWARE = [

@@ -7,7 +7,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic import View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from accounts.models import BankAccount
+from banking.models import BankAccount
 from django.db import transaction
 
 
