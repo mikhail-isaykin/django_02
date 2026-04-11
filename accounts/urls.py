@@ -1,0 +1,1 @@
+path("add_deposit/", deposit_money_view, name="add_deposit")
