@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Перевод денег</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="recipient_username" class="form-label">Имя пользователя (username):</label>
+            <input type="text" class="form-control" id="recipient_username" name="recipient_username" placeholder="Введите username">
+        </div>
+
+        <p class="text-center">или</p>
+
+        <div class="mb-3">
+            <label for="recipient_account" class="form-label">Номер счёта:</label>
+            <input type="text" class="form-control" id="recipient_account" name="recipient_account" placeholder="Введите номер счёта">
+        </div>
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Сумма перевода:</label>
+            <input type="number" step="0.01" class="form-control" id="amount" name="amount" placeholder="Введите сумму" required>
+        </div>
+
+        <button type="submit" class="btn btn-success">Перевести</button>
+    </form>
+</div>
+{% endblock %}
