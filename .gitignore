@@ -35,3 +35,4 @@ staticfiles/
 Thumbs.db
 
 ruff.toml
+.prettierrc

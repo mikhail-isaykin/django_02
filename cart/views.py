@@ -21,13 +21,13 @@ def add_to_cart(request, product_slug):
     if not created:
         cart_item.quantity += 1
         cart_item.save()
-    redirect_page = request.META.get("HTTP_REFERER", reverse("home_page"))
+    redirect_page = request.META.get('HTTP_REFERER', reverse('products:home'))
     return redirect(redirect_page)
 
 
 class CartDetailView(LoginRequiredMixin, ListView):
-    template_name = "cart_detail.html"
-    context_object_name = "cart_items"
+    template_name = 'cart/cart_detail.html'
+    context_object_name = 'cart_items'
 
     def get_queryset(self):
         self.cart, _ = Cart.objects.get_or_create(user=self.request.user)
@@ -35,7 +35,7 @@ class CartDetailView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["cart"] = self.cart
+        context['cart'] = self.cart
         return context
 
 
@@ -45,19 +45,19 @@ class CartPurchaseView(LoginRequiredMixin, View):
         cart = Cart.objects.filter(user=user).first()
         bank_account = BankAccount.objects.filter(user=user).first()
         if not cart or not bank_account:
-            messages.error(request, "Отсутствует корзина или банковский счет")
-            return redirect("cart_detail")
+            messages.error(request, 'Отсутствует корзина или банковский счет')
+            return redirect('cart:detail')
         total = sum(
             cart_item.product.price * cart_item.quantity
             for cart_item in cart.items.all()
         )
         if bank_account.balance < total:
-            messages.error(request, "Недостаточно средств")
-            return redirect("cart_detail")
+            messages.error(request, 'Недостаточно средств')
+            return redirect('cart:detail')
         with transaction.atomic():
             bank_account = BankAccount.objects.select_for_update().get(user=user)
             bank_account.balance -= total
             bank_account.save()
             cart.items.all().delete()
-        messages.success(request, "Покупка успешно оформлена")
-        return redirect("home")
+        messages.success(request, 'Покупка успешно оформлена')
+        return redirect('products:home')

@@ -31,7 +31,7 @@
 
     <div class="d-flex justify-content-between align-items-center mt-5 p-3 bg-light rounded shadow-sm">
         <h4 class="m-0">Итого: <b>{{ cart.total_price }} ₽</b></h4>
-        <form method="post" action="{% url 'homepage:buy_cart' %}">
+        <form method="post" action="{% url 'cart:purchase' %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-success btn-lg">Купить</button>
         </form>

@@ -1,5 +1,7 @@
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 from .models import Category, Product
+from django.contrib import messages
+from django.shortcuts import render
 
 
 class HomePageView(TemplateView):
@@ -16,5 +18,3 @@ class HomePageView(TemplateView):
         context['selected_category'] = selected_category
         context['products'] = products
         return context
-
-

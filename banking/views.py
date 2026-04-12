@@ -30,10 +30,10 @@ class DepositAccountView(LoginRequiredMixin, View):
                 bank_account = BankAccount.objects.select_for_update().get(user=request.user)
                 bank_account.balance += amount
                 bank_account.save()
-            return redirect('bank_account')
+            return redirect('banking:bank')
         except InvalidOperation:
             messages.error(request, 'Введите корректную сумму больше нуля.')
-            return redirect('deposit_account')
+            return redirect('banking:add_deposit')
 
 
 
@@ -54,12 +54,12 @@ class TransferMoneyView(LoginRequiredMixin, View):
                 raise InvalidOperation
         except InvalidOperation as error:
             messages.error(request, error)
-            return redirect(?)
+            return redirect('banking:bank')
         recipient_username = request.POST.get('recipient_username')
         recipient_account = request.POST.get('recipient_account')
         if not recipient_username and not recipient_account:
             messages.error(request, 'Укажите получателя или банковский счет')
-            return redirect()
+            return redirect('banking:transfer')
         filters = {}
         if recipient_username:
             filters['user__username'] = recipient_username
@@ -71,17 +71,17 @@ class TransferMoneyView(LoginRequiredMixin, View):
                 sender_bank_account = get_object_or_404(BankAccount.objects.select_for_update(), user=request.user) # отправитель
                 if sender_bank_account.balance < amount:
                     messages.error(request, 'Недостаточно средств, пополните баланс')
-                    return redirect()
+                    return redirect('banking:add_deposit')
                 recipient_bank_account = get_object_or_404(BankAccount.objects.select_for_update(), **filters) # получатель
                 sender_bank_account.balance -= amount
                 sender_bank_account.save()
                 recipient_bank_account.balance += amount
                 recipient_bank_account.save()
-                messages.success(request, ...)
-                return redirect(...)
+                messages.success(request, 'Перевод успешно выполнен')
+                return redirect('banking:bank')
         except Exception as error:
             messages.error(request, error)
-            return redirect(....)
+            return redirect('banking:bank')
         
 
     def get(self, request):

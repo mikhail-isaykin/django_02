@@ -1,50 +1,51 @@
-{% extends 'base.html' %}
-
-{% block content %}
-  <h2 class="text-center mb-4">Категории</h2>
-  <div class="container my-5">
-    <div class="row g-4 justify-content-center">
-      {% for category in categories %}
-        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-          <a href="?category={{ category.slug }}" class="card h-100 text-decoration-none text-dark shadow-sm">
-            {% if category.image %}
-              <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" />
-            {% endif %}
-            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-              <h5 class="card-title text-center">{{ category.name }}</h5>
-            </div>
-          </a>
+{% extends 'base.html' %} {% block content %}
+<h2 class="text-center mb-4">Категории</h2>
+<div class="container my-5">
+  <div class="row g-4 justify-content-center">
+    {% for category in categories %}
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+      <a href="?category={{ category.slug }}" class="card h-100 text-decoration-none text-dark shadow-sm">
+        {% if category.image %}
+        <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" />
+        {% endif %}
+        <div class="card-body d-flex flex-column align-items-center justify-content-center">
+          <h5 class="card-title text-center">{{ category.name }}</h5>
         </div>
-      {% endfor %}
+      </a>
     </div>
+    {% endfor %}
   </div>
+</div>
 
-  {% if selected_category %}
-    <h2 class="text-center my-4">Продукты категории: {{ selected_category.name }}</h2>
-    <div class="container my-5">
-      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-        {% for product in products %}
-          <div class="col">
-            <div class="card h-100 shadow-sm">
-              <a href="" class="text-decoration-none text-dark">
-                {% if category.image %}
-                  <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" />
-                {% endif %}
-              </a>
-              <div class="card-body">
-                <a href="" class="text-decoration-none text-dark"><h5 class="card-title">{{ product.name }}</h5></a>
-                <p class="card-text">
-                  Цена: <b>{{ product.price }}</b>
-                </p>
-                <form action="{% url 'homepage:add_to_cart' product.slug %}" method="post">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-primary mt-3 w-100"><i class="bi bi-cart"></i> Добавить в корзину</button>
-                </form>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
+{% if selected_category %}
+<h2 class="text-center my-4">Продукты категории: {{ selected_category.name }}</h2>
+<div class="container my-5">
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    {% for product in products %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <a href="" class="text-decoration-none text-dark">
+          {% if category.image %}
+          <img src="{{ category.image.url }}" class="card-img-top" alt="{{ category.name }}" />
+          {% endif %}
+        </a>
+        <div class="card-body">
+          <a href="" class="text-decoration-none text-dark"><h5 class="card-title">{{ product.name }}</h5></a>
+          <p class="card-text">
+            Цена:
+            <b>{{ product.price }}</b>
+          </p>
+          <form action="{% url 'cart:add_to_cart' product.slug %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary mt-3 w-100">
+              <i class="bi bi-cart"></i>
+              Добавить в корзину
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  {% endif %}
-{% endblock %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %} {% endblock %}
