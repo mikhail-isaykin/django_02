@@ -2,6 +2,8 @@ from django.views.generic import TemplateView, DetailView
 from .models import Category, Product
 from django.contrib import messages
 from django.shortcuts import render
+from .forms import FeedbackForm
+from django.shortcuts import redirect
 
 
 class HomePageView(TemplateView):
@@ -18,3 +20,17 @@ class HomePageView(TemplateView):
         context['selected_category'] = selected_category
         context['products'] = products
         return context
+
+
+def registration(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            print('Форма успешно отправлена!')
+            print(f'Имя: {form.cleaned_data["name"]}')
+            print(f'Email: {form.cleaned_data["email"]}')
+            print(f'Сообщение: {form.cleaned_data["message"]}')
+            return redirect('products:registration')
+    else:
+        form = FeedbackForm()
+    return render(request, 'products/registration.html', {'form': form})
