@@ -2,7 +2,15 @@ from django.views.generic import TemplateView, DetailView
 from .models import Category, Product
 from django.contrib import messages
 from django.shortcuts import render
-from .forms import FeedbackForm
+from .forms import (
+    FeedbackForm,
+    ProfileForm,
+    LoginForm,
+    ContactForm,
+    UsernameForm,
+    PasswordForm,
+    RegisterForm,
+)
 from django.shortcuts import redirect
 
 
@@ -24,13 +32,13 @@ class HomePageView(TemplateView):
 
 def registration(request):
     if request.method == 'POST':
-        form = FeedbackForm(request.POST)
+        form = RegisterForm(request.POST)
         if form.is_valid():
             print('Форма успешно отправлена!')
-            print(f'Имя: {form.cleaned_data["name"]}')
-            print(f'Email: {form.cleaned_data["email"]}')
-            print(f'Сообщение: {form.cleaned_data["message"]}')
+            # print(f'Имя: {form.cleaned_data["name"]}')
+            # print(f'Email: {form.cleaned_data["email"]}')
+            # print(f'Сообщение: {form.cleaned_data["message"]}')
             return redirect('products:registration')
     else:
-        form = FeedbackForm()
+        form = RegisterForm()
     return render(request, 'products/registration.html', {'form': form})
