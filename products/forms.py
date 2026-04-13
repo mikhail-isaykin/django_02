@@ -1,5 +1,6 @@
 from django import forms
-from .models import Feedback, Order
+from .models import Feedback, Order, Event
+from datetime import date as dt
 
 
 class FeedbackForm(forms.Form):
@@ -100,3 +101,15 @@ class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['customer', 'product', 'quantity']
+
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        fields = ['title', 'date']
+    
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        if date < dt.today():
+            raise forms.ValidationError('Дата не может быть в прошлом')
+        return date

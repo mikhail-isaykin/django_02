@@ -85,3 +85,17 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order {self.pk} - {self.customer.name}'
+
+
+class Event(models.Model):
+    title = models.CharField(max_length=30)
+    date = models.DateField()
+
+
+    class Meta:
+        verbose_name = 'event'
+        verbose_name_plural = 'events'
+        ordering = ['title']
+    
+    def __str__(self):
+        return self.title

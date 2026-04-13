@@ -12,6 +12,7 @@ from .forms import (
     RegisterForm,
     FeedbackForm,
     OrderForm,
+    EventForm,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -82,3 +83,13 @@ def order(request):
             order.save()
             return redirect('products:order')
     return render(request, 'form.html', {'form': form})
+
+
+def event(request):
+    form = EventForm()
+    if request.method == 'POST':
+        form = EventForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('products:event')
+    return render(request, 'event.html', {'form': form})
