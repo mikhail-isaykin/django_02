@@ -11,6 +11,7 @@ from .forms import (
     PasswordForm,
     RegisterForm,
     FeedbackForm,
+    OrderForm,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -69,3 +70,15 @@ class FeedbackView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+def order(request):
+    form = OrderForm()
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.total_price = order.product.price * order.quantity
+            order.save()
+            return redirect('products:order')
+    return render(request, 'form.html', {'form': form})
