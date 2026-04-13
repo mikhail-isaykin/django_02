@@ -131,3 +131,12 @@ class UserRegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class LoginForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for value in self.fields.values():
+            value.widget.attrs['class'] = 'form-control'
+    
+    username = forms.CharField(max_length=30)
+    password = forms.CharField(max_length=30, widget=forms.PasswordInput())
