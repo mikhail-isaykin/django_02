@@ -13,6 +13,7 @@ from .forms import (
     FeedbackForm,
     OrderForm,
     EventForm,
+    UserRegisterForm,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -93,3 +94,13 @@ def event(request):
             form.save()
             return redirect('products:event')
     return render(request, 'event.html', {'form': form})
+
+
+class RegisterView(FormView):
+    template_name = 'register.html'
+    form_class = UserRegisterForm
+    success_url = reverse_lazy('products:register')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
