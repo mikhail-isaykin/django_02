@@ -10,8 +10,12 @@ from .forms import (
     UsernameForm,
     PasswordForm,
     RegisterForm,
+    FeedbackForm,
 )
 from django.shortcuts import redirect
+from django.views import View
+from django.views.generic import FormView
+from django.urls import reverse_lazy
 
 
 class HomePageView(TemplateView):
@@ -42,3 +46,26 @@ def registration(request):
     else:
         form = RegisterForm()
     return render(request, 'products/registration.html', {'form': form})
+
+
+class FeedbackView(View):
+    def post(self, request):
+        form = FeedbackForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('products:feedback')
+        return render(request, 'registration.html', {'form': form})
+
+    def get(self, request):
+        form = FeedbackForm()
+        return render(request, 'registration.html', {'form': form})
+
+
+class FeedbackView(FormView):
+    template_name = 'registration.html'
+    form_class = FeedbackForm
+    success_url = reverse_lazy('products:feedback')
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)

@@ -1,4 +1,5 @@
 from django import forms
+from .models import Feedback
 
 
 class FeedbackForm(forms.Form):
@@ -87,3 +88,9 @@ class RegisterForm(forms.Form):
         confirm_password = cleaned_data.get('confirm_password')
         if password and confirm_password and password != confirm_password:
             self.add_error('confirm_password', 'Пароли не совпадают')
+
+
+class FeedbackForm(forms.ModelForm):
+    class Meta:
+        model = Feedback
+        fields = ['name', 'email', 'message']
