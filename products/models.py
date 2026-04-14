@@ -72,7 +72,7 @@ class Feedback(models.Model):
         return self.name
 
 
-class Order(models.Model):
+'''class Order(models.Model):
     customer = models.ForeignKey(Сustomer, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
@@ -85,9 +85,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Order {self.pk} - {self.customer.name}'
+'''
 
 
-class Event(models.Model):
+'''class Event(models.Model):
     title = models.CharField(max_length=30)
     date = models.DateField()
 
@@ -98,4 +99,4 @@ class Event(models.Model):
         ordering = ['title']
     
     def __str__(self):
-        return self.title
+        return self.title'''

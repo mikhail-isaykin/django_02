@@ -1,8 +1,9 @@
 from django import forms
-from .models import Feedback, Order, Event, User
+from .models import Feedback
 from datetime import date as dt
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from re import fullmatch
 
 
 class FeedbackForm(forms.Form):
@@ -99,13 +100,13 @@ class FeedbackForm(forms.ModelForm):
         fields = ['name', 'email', 'message']
 
 
-class OrderForm(forms.ModelForm):
+'''class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['customer', 'product', 'quantity']
+        fields = ['customer', 'product', 'quantity']'''
 
 
-class EventForm(forms.ModelForm):
+'''class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['title', 'date']
@@ -114,7 +115,7 @@ class EventForm(forms.ModelForm):
         date = self.cleaned_data['date']
         if date < dt.today():
             raise forms.ValidationError('Дата не может быть в прошлом')
-        return date
+        return date'''
 
 
 class UserRegisterForm(forms.ModelForm):
@@ -163,6 +164,7 @@ class RegisterForm(forms.Form):
         if ' ' in value:
             raise ValidationError('Имя пользователя не должно содержать пробелов')
 
+
 class RegisterForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
@@ -173,3 +175,26 @@ class RegisterForm(forms.Form):
         if not email.endswith('@gmail.com'):
             raise forms.ValidationError('Email должен заканчиваться на @gmail.com')
         return email
+
+
+class ArticleForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['slug'].validators.append(type(self).is_slug)
+
+    title = forms.CharField()
+    slug = forms.CharField()
+    content = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}))
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if len(title) < 10:
+            raise forms.ValidationError(
+                'Заголовок должен содержать не менее 10 символов'
+            )
+        return title
+
+    @staticmethod
+    def is_slug(value):
+        if not fullmatch(r'[a-z_]+', value):
+            raise ValidationError('Slug может содержать только [a-z_]')

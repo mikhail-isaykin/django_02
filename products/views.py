@@ -11,9 +11,8 @@ from .forms import (
     PasswordForm,
     RegisterForm,
     FeedbackForm,
-    OrderForm,
-    EventForm,
     UserRegisterForm,
+    ArticleForm,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -104,3 +103,16 @@ class RegisterView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
+
+def article_view(request):
+    form = ArticleForm()
+    if request.method == 'POST':
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            print('Успех')
+            print(
+                f'{form.cleaned_data["title"]} - {form.cleaned_data["slug"]} - {form.cleaned_data["content"]}'
+            )
+            return redirect('products:article')
+    return render(request, 'article.html', {'form': form})
