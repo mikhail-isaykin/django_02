@@ -162,3 +162,14 @@ class RegisterForm(forms.Form):
     def validate_no_spaces(value):
         if ' ' in value:
             raise ValidationError('Имя пользователя не должно содержать пробелов')
+
+class RegisterForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput())
+    email = forms.EmailField()
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not email.endswith('@gmail.com'):
+            raise forms.ValidationError('Email должен заканчиваться на @gmail.com')
+        return email
