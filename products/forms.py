@@ -2,6 +2,7 @@ from django import forms
 from .models import Feedback, Order, Event, User
 from datetime import date as dt
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 
 class FeedbackForm(forms.Form):
@@ -108,7 +109,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['title', 'date']
-    
+
     def clean_date(self):
         date = self.cleaned_data['date']
         if date < dt.today():
@@ -124,19 +125,40 @@ class UserRegisterForm(forms.ModelForm):
             'email': forms.TextInput(attrs={'placeholder': 'Введите ваш email'}),
             'password': forms.PasswordInput(),
         }
-    
-    def save(self, commit = True):
+
+    def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
         if commit:
             user.save()
         return user
 
+
 class LoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for value in self.fields.values():
             value.widget.attrs['class'] = 'form-control'
-    
+
     username = forms.CharField(max_length=30)
     password = forms.CharField(max_length=30, widget=forms.PasswordInput())
+
+
+class RegisterForm(forms.Form):
+    email = forms.EmailField(
+        max_length=30, widget=forms.EmailInput(attrs={'placeholder': 'Введите email'})
+    )
+
+
+class RegisterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].validators.append(self.validate_no_spaces)
+
+    username = forms.CharField(max_length=30)
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    @staticmethod
+    def validate_no_spaces(value):
+        if ' ' in value:
+            raise ValidationError('Имя пользователя не должно содержать пробелов')
