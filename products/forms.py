@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback
+from .models import Feedback, Resume
 from datetime import date as dt
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -100,13 +100,13 @@ class FeedbackForm(forms.ModelForm):
         fields = ['name', 'email', 'message']
 
 
-'''class OrderForm(forms.ModelForm):
+"""class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = ['customer', 'product', 'quantity']'''
+        fields = ['customer', 'product', 'quantity']"""
 
 
-'''class EventForm(forms.ModelForm):
+"""class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         fields = ['title', 'date']
@@ -115,7 +115,7 @@ class FeedbackForm(forms.ModelForm):
         date = self.cleaned_data['date']
         if date < dt.today():
             raise forms.ValidationError('Дата не может быть в прошлом')
-        return date'''
+        return date"""
 
 
 class UserRegisterForm(forms.ModelForm):
@@ -198,3 +198,8 @@ class ArticleForm(forms.Form):
     def is_slug(value):
         if not fullmatch(r'[a-z_]+', value):
             raise ValidationError('Slug может содержать только [a-z_]')
+
+
+class ResumeForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    resume = forms.FileField()

@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView, DetailView
-from .models import Category, Product
+from .models import Category, Product, Resume
 from django.contrib import messages
 from django.shortcuts import render
 from .forms import (
@@ -13,6 +13,7 @@ from .forms import (
     FeedbackForm,
     UserRegisterForm,
     ArticleForm,
+    ResumeForm,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -116,3 +117,19 @@ def article_view(request):
             )
             return redirect('products:article')
     return render(request, 'article.html', {'form': form})
+
+def resume_view(request):
+    form = ResumeForm()
+    if request.method == 'POST':
+        form = ResumeForm(request.POST, request.FILES)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            resume = form.cleaned_data['resume']
+            new_resume = Resume(username=username, resume=resume)
+            new_resume.save()
+            return redirect('products:resume')
+    return render(
+        request,
+        'resume.html',
+        {'form': form}
+    )

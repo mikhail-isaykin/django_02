@@ -100,3 +100,7 @@ class Feedback(models.Model):
     
     def __str__(self):
         return self.title'''
+
+class Resume(models.Model):
+    username = models.CharField(max_length=100)
+    resume = models.FileField(upload_to='resumes/')
