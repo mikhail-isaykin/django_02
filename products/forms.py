@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, Resume
+from .models import Feedback, Resume, Profile
 from datetime import date as dt
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -24,8 +24,8 @@ class FeedbackForm(forms.Form):
         return message
 
 
-class ProfileForm(forms.Form):
-    city = forms.CharField(label='Город', initial='Москва')
+'''class ProfileForm(forms.Form):
+    city = forms.CharField(label='Город', initial='Москва')'''
 
 
 class LoginForm(forms.Form):
@@ -203,3 +203,10 @@ class ArticleForm(forms.Form):
 class ResumeForm(forms.Form):
     username = forms.CharField(max_length=100)
     resume = forms.FileField()
+
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['avatar']
+        label = {'avatar': 'Аватар'}

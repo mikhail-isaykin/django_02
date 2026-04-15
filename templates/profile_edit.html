@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Редактирование профиля</h1>
+    <div>
+      Текущий аватар:
+      {% if user.profile.avatar %}
+        <img src="{{ user.profile.avatar.url }}" alt="Аватар">
+      {% else %}
+        <p>Аватар не загружен.</p>
+      {% endif %}
+    </div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Сохранить</button>
+    </form>
+  </body>
+</html>

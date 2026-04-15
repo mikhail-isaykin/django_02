@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import HomePageView, registration, article_view, resume_view
+from .views import HomePageView, registration, article_view, resume_view, profile_view, ProfileView
 
 
 app_name = 'products'
@@ -9,4 +9,6 @@ urlpatterns = [
     path('registration/', registration, name='registration'),
     path('article/', article_view, name='article'),
     path('resume/', resume_view, name='resume'),
+    path('profile/edit', profile_view, name='profile_edit'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]

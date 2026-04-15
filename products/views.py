@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView, DetailView
-from .models import Category, Product, Resume
+from .models import Category, Product, Resume, Profile
 from django.contrib import messages
 from django.shortcuts import render
 from .forms import (
@@ -133,8 +133,31 @@ def resume_view(request):
                 return redirect('products:resume')
             except ValidationError as error:
                 form.add_error('resume', error.message_dict['resume'])
+                print(type(error), error)
     return render(
         request,
         'resume.html',
         {'form': form}
     )
+
+def profile_view(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    form = ProfileForm(instance=profile)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('products:profile')
+    return render(
+        request,
+        'profile_edit.html',
+        {'form': form, 'user': request.user}
+    )
+
+class ProfileView(TemplateView):
+    template_name = 'profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        return context
