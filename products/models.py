@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 
 
 class Category(models.Model):
@@ -72,7 +73,7 @@ class Feedback(models.Model):
         return self.name
 
 
-'''class Order(models.Model):
+"""class Order(models.Model):
     customer = models.ForeignKey(Сustomer, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
@@ -85,10 +86,10 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f'Order {self.pk} - {self.customer.name}'
-'''
+"""
 
 
-'''class Event(models.Model):
+"""class Event(models.Model):
     title = models.CharField(max_length=30)
     date = models.DateField()
 
@@ -99,8 +100,20 @@ class Feedback(models.Model):
         ordering = ['title']
     
     def __str__(self):
-        return self.title'''
+        return self.title"""
+
 
 class Resume(models.Model):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if type(self).is_resume not in (validators := type(self)._meta.get_field('resume').validators):
+            validators.append(type(self).is_resume)
+        
     username = models.CharField(max_length=100)
     resume = models.FileField(upload_to='resumes/')
+
+    @staticmethod
+    def is_resume(resume):
+        if not resume.name.endswith('.png'):
+            raise ValidationError('Можно загружать только .png')
+        return resume

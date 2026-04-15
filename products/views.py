@@ -19,6 +19,7 @@ from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import FormView
 from django.urls import reverse_lazy
+from django.core.exceptions import ValidationError
 
 
 class HomePageView(TemplateView):
@@ -126,8 +127,12 @@ def resume_view(request):
             username = form.cleaned_data['username']
             resume = form.cleaned_data['resume']
             new_resume = Resume(username=username, resume=resume)
-            new_resume.save()
-            return redirect('products:resume')
+            try:
+                new_resume.full_clean()
+                new_resume.save()
+                return redirect('products:resume')
+            except ValidationError as error:
+                form.add_error('resume', error.message_dict['resume'])
     return render(
         request,
         'resume.html',
