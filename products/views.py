@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView, DetailView
-from .models import Category, Product, Resume, Profile
+from .models import Category, Product, Resume, Profile, Gallery, Photo
 from django.contrib import messages
 from django.shortcuts import render
 from .forms import (
@@ -14,6 +14,7 @@ from .forms import (
     UserRegisterForm,
     ArticleForm,
     ResumeForm,
+    PhotoUploadForm,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -165,3 +166,19 @@ class ProfileView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         return context
+
+def multi_upload(request):
+    form = PhotoUploadForm()
+    if request.method == 'POST':
+        form = PhotoUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            gallery = Gallery.objects.create()
+            images = form.cleaned_data['image']
+            for image in images:
+                Photo.objects.create(gallery=gallery, image=image)
+            return redirect('products:gallery')
+    return render(
+        request,
+        'products/gallery_upload.html',
+        {'form': form}
+    )

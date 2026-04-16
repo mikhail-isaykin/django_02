@@ -1,5 +1,5 @@
 from django import forms
-from .models import Feedback, Resume, Profile
+from .models import Feedback, Resume, Profile, Photo
 from datetime import date as dt
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
@@ -24,8 +24,8 @@ class FeedbackForm(forms.Form):
         return message
 
 
-'''class ProfileForm(forms.Form):
-    city = forms.CharField(label='Город', initial='Москва')'''
+"""class ProfileForm(forms.Form):
+    city = forms.CharField(label='Город', initial='Москва')"""
 
 
 class LoginForm(forms.Form):
@@ -210,3 +210,23 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['avatar']
         label = {'avatar': 'Аватар'}
+
+
+class PhotoUploadForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['image'] = self.MultiplePhotoField(widget=self.MultiplePhotoInput())
+
+    class MultiplePhotoInput(forms.ClearableFileInput):
+        allow_multiple_selected = True
+
+    class MultiplePhotoField(forms.ImageField):
+        def clean(self, data, initial=None):
+            if isinstance(data, (list, tuple)):
+                return [super().clean(d, initial) for d in data]
+            return [super().clean(data, initial)]
+
+    class Meta:
+        model = Photo
+        fields = ['image']
+        labels = {'image': 'Выберите фото'}

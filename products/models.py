@@ -107,9 +107,11 @@ class Feedback(models.Model):
 class Resume(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if type(self).is_resume not in (validators := type(self)._meta.get_field('resume').validators):
+        if type(self).is_resume not in (
+            validators := type(self)._meta.get_field('resume').validators
+        ):
             validators.append(type(self).is_resume)
-        
+
     username = models.CharField(max_length=100)
     resume = models.FileField(upload_to='resumes/')
 
@@ -122,13 +124,27 @@ class Resume(models.Model):
 class Profile(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if type(self).is_avatar not in (validators := type(self)._meta.get_field('avatar').validators):
+        if type(self).is_avatar not in (
+            validators := type(self)._meta.get_field('avatar').validators
+        ):
             validators.append(type(self).is_avatar)
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile'
+    )
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
     @staticmethod
     def is_avatar(avatar):
         if avatar.size / 1024 / 1024 > 2:
             raise ValidationError('Размер изображения не должен превышать 2 мб.')
+
+
+class Gallery(models.Model):
+    pass
+
+
+class Photo(models.Model):
+    gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='gallery/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
