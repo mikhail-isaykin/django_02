@@ -146,8 +146,12 @@ def profile_view(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
-            form.save()
-            return redirect('products:profile')
+            try:
+                form.full_clean()
+                form.save()
+                return redirect('products:profile')
+            except ValidationError as error:
+                form.add_error('avatar', error.message_dict['avatar'])
     return render(
         request,
         'profile_edit.html',

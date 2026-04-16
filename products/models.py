@@ -117,9 +117,18 @@ class Resume(models.Model):
     def is_resume(resume):
         if not resume.name.endswith('.png'):
             raise ValidationError('Можно загружать только .png')
-        return resume
 
 
 class Profile(models.Model):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if type(self).is_avatar not in (validators := type(self)._meta.get_field('avatar').validators):
+            validators.append(type(self).is_avatar)
+
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+
+    @staticmethod
+    def is_avatar(avatar):
+        if avatar.size / 1024 / 1024 > 2:
+            raise ValidationError('Размер изображения не должен превышать 2 мб.')
