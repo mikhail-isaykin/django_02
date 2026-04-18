@@ -254,3 +254,20 @@ class TaskForm(forms.Form):
 
 
 TaskFormset = formset_factory(TaskForm, extra=5)
+
+
+class StudentForm(forms.Form):
+    email = forms.EmailField(label='Email')
+
+class BaseStudentFormset(forms.BaseFormSet):
+    def clean(self):
+        super().clean()
+        emails = set()
+        for form in self.forms:
+            if form.has_changed():
+                email = form.cleaned_data['email']
+                if email in emails:
+                    raise forms.ValidationError('email не может повторяться')
+                emails.add(email)
+
+StudentFormset = formset_factory(StudentForm, formset=BaseStudentFormset, extra=3)

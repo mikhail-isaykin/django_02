@@ -3,21 +3,12 @@ from .models import Category, Product, Resume, Profile, Gallery, Photo
 from django.contrib import messages
 from django.shortcuts import render
 from .forms import (
-    FeedbackForm,
-    ProfileForm,
-    LoginForm,
-    ContactForm,
-    UsernameForm,
-    PasswordForm,
-    RegisterForm,
-    FeedbackForm,
-    UserRegisterForm,
-    ArticleForm,
-    ResumeForm,
-    PhotoUploadForm,
-    ContactFormset,
-    OrderFormset,
-    TaskFormset,
+    FeedbackForm, ProfileForm, LoginForm,
+    ContactForm, UsernameForm, PasswordForm,
+    RegisterForm, FeedbackForm, UserRegisterForm,
+    ArticleForm, ResumeForm, PhotoUploadForm,
+    ContactFormset, OrderFormset, TaskFormset,
+    StudentFormset,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -187,13 +178,14 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    formset = TaskFormset()
+    formset = StudentFormset()
     if request.method == 'POST':
-        formset = TaskFormset(request.POST)
+        formset = StudentFormset(request.POST)
         if formset.is_valid():
             for form in formset:
-                title = form.cleaned_data['title']
-                print(title)
+                if form.has_changed():
+                    email = form.cleaned_data['email']
+                    print(email)
             return redirect('products:formset')
     return render(
         request,
