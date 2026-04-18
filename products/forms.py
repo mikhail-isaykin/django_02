@@ -278,12 +278,17 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['name', 'price']
         labels = {'name': 'Название', 'price': 'Цена'}
+    
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if not self.instance.pk and len(name) < 3:
+            raise forms.ValidationError('названия продукта не может быть меньше 3 символов')
+        return name
 
 
 ProductFormset = modelformset_factory(
     model=Product,
     form=ProductForm,
-    max_num=5,
-    extra=1,
+    extra=2,
     can_delete=True
 )
