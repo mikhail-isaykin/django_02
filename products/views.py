@@ -183,11 +183,16 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    form = CustomAuthenticationForm()
+    form = RegistrationForm()
     if request.method == 'POST':
-        form = CustomAuthenticationForm(request, data=request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.get_user()
+            data = {
+                'username': form.cleaned_data['username'],
+                'email': form.cleaned_data['email'],
+                'password': form.cleaned_data['password']
+            }
+            user = User.objects.create_user(**data)
             login(request, user)
             return redirect('products:home')
     return render(

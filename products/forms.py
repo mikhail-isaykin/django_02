@@ -313,12 +313,12 @@ class RegistrationForm(forms.Form):
         password_confirm = cleaned_data.get('password_confirm')
         if password and password_confirm and password != password_confirm:
             self.add_error('password_confirm', 'Пароли не совпадают')
-        
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        if User.objects.filter(email=email).exists():
-            raise forms.ValidationError('Email уже существует')
-        return email
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        if len(password) < 8:
+            self.add_error('password', 'Пароль должен одержать больше 8 символов')
+        return password
 
 class CustomRegistrationForm(UserCreationForm):
     email = forms.EmailField()
