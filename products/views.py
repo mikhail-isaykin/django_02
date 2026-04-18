@@ -178,7 +178,7 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    products = Product.objects.all()
+    products = Product.objects.filter(is_published=True, price__gt=100, quantity__gte=10)
     formset = ProductFormset(queryset=products)
     if request.method == 'POST':
         formset = ProductFormset(request.POST, queryset=products)

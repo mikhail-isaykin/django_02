@@ -276,8 +276,13 @@ StudentFormset = formset_factory(StudentForm, formset=BaseStudentFormset, extra=
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'price']
-        labels = {'name': 'Название', 'price': 'Цена'}
+        fields = ['name', 'price', 'quantity', 'is_published']
+        labels = {
+            'name': 'Название',
+            'price': 'Цена',
+            'quantity': 'Количество',
+            'is_published': 'Статус'
+        }
     
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -289,6 +294,6 @@ class ProductForm(forms.ModelForm):
 ProductFormset = modelformset_factory(
     model=Product,
     form=ProductForm,
-    extra=2,
+    extra=0,
     can_delete=True
 )
