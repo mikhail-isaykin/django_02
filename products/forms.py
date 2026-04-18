@@ -239,3 +239,11 @@ class ContactForm(forms.Form):
 
 
 ContactFormset = formset_factory(ContactForm, min_num=2, extra=0)
+
+
+class OrderForm(forms.Form):
+    product_name = forms.CharField(label='Название продукта')
+    quantity = forms.IntegerField(min_value=0)
+
+
+OrderFormset = formset_factory(OrderForm, extra=3)

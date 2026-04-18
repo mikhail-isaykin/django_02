@@ -16,6 +16,7 @@ from .forms import (
     ResumeForm,
     PhotoUploadForm,
     ContactFormset,
+    OrderFormset,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -185,15 +186,15 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    formset = ContactFormset()
+    formset = OrderFormset()
     if request.method == 'POST':
-        formset = ContactFormset(request.POST)
+        formset = OrderFormset(request.POST)
         if formset.is_valid():
             for form in formset:
-                name = form.cleaned_data['name']
-                email = form.cleaned_data['email']
-                print(name)
-                print(email)
+                product_name = form.cleaned_data['product_name']
+                quantity = form.cleaned_data['quantity']
+                print(product_name)
+                print(quantity)
             return redirect('products:formset')
     return render(
         request,
