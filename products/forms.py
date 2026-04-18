@@ -39,10 +39,10 @@ class LoginForm(forms.Form):
     )
 
 
-'''class ContactForm(forms.Form):
+"""class ContactForm(forms.Form):
     subject = forms.CharField(label='Тема')
     email = forms.EmailField(label='Ваш email')
-    message = forms.CharField(label='Сообщение')'''
+    message = forms.CharField(label='Сообщение')"""
 
 
 class UsernameForm(forms.Form):
@@ -247,3 +247,10 @@ class OrderForm(forms.Form):
 
 
 OrderFormset = formset_factory(OrderForm, extra=3)
+
+
+class TaskForm(forms.Form):
+    title = forms.CharField(label='Название', max_length=100)
+
+
+TaskFormset = formset_factory(TaskForm, extra=5)
