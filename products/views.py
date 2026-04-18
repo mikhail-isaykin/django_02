@@ -16,7 +16,7 @@ from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 User = get_user_model()
 from django.contrib.auth.forms import AuthenticationForm
 
@@ -182,16 +182,10 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    form = AuthenticationForm()
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            print(user)
-            login(request, user)
-            return redirect('products:home')
+        logout(request)
+        return redirect('products:home')
     return render(
         request,
-        'products/formset.html',
-        {'form': form}
+        'products/formset.html'
     )
