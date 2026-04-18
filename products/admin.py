@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
 
-@admin.register(Product)
+'''@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
     list_display = (
@@ -26,7 +26,7 @@ class ProductAdmin(admin.ModelAdmin):
     )
     list_filter = ('category', 'is_active')
     search_fields = ('name',)
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')'''
 
 @admin.register(Gallery)
 class GalleryAdmin(admin.ModelAdmin):

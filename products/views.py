@@ -8,7 +8,7 @@ from .forms import (
     RegisterForm, FeedbackForm, UserRegisterForm,
     ArticleForm, ResumeForm, PhotoUploadForm,
     ContactFormset, OrderFormset, TaskFormset,
-    StudentFormset,
+    StudentFormset, ProductFormset,
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -178,14 +178,23 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    formset = StudentFormset()
+    products = Product.objects.all()
+    formset = ProductFormset(queryset=products)
     if request.method == 'POST':
-        formset = StudentFormset(request.POST)
+        formset = ProductFormset(request.POST, queryset=products)
         if formset.is_valid():
             for form in formset:
                 if form.has_changed():
-                    email = form.cleaned_data['email']
-                    print(email)
+                    pk = form.instance.pk
+                    if pk is None:
+                        print('Oбъект создан:')
+                    elif form in formset.deleted_forms:
+                        print(f'Oбъект {pk} удален:')
+                    else:
+                        print(f'Oбъект {pk} обновлен:')
+                    print(form.instance.name, form.instance.price)
+            formset.save()
+            print(Product.objects.all())
             return redirect('products:formset')
     return render(
         request,

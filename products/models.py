@@ -28,7 +28,7 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
 
-class Product(models.Model):
+'''class Product(models.Model):
     category = models.ForeignKey(
         Category, on_delete=models.PROTECT, related_name='products'
     )
@@ -57,7 +57,7 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)'''
 
 
 class Feedback(models.Model):
@@ -148,3 +148,8 @@ class Photo(models.Model):
     gallery = models.ForeignKey(Gallery, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='gallery/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])

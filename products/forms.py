@@ -1,10 +1,10 @@
 from django import forms
-from .models import Feedback, Resume, Profile, Photo
+from .models import Feedback, Resume, Profile, Photo, Product
 from datetime import date as dt
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from re import fullmatch
-from django.forms import formset_factory
+from django.forms import formset_factory, modelformset_factory
 
 
 class FeedbackForm(forms.Form):
@@ -271,3 +271,19 @@ class BaseStudentFormset(forms.BaseFormSet):
                 emails.add(email)
 
 StudentFormset = formset_factory(StudentForm, formset=BaseStudentFormset, extra=3)
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'price']
+        labels = {'name': 'Название', 'price': 'Цена'}
+
+
+ProductFormset = modelformset_factory(
+    model=Product,
+    form=ProductForm,
+    max_num=5,
+    extra=1,
+    can_delete=True
+)
