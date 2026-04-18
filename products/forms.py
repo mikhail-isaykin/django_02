@@ -4,6 +4,7 @@ from datetime import date as dt
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from re import fullmatch
+from django.forms import formset_factory
 
 
 class FeedbackForm(forms.Form):
@@ -38,10 +39,10 @@ class LoginForm(forms.Form):
     )
 
 
-class ContactForm(forms.Form):
+'''class ContactForm(forms.Form):
     subject = forms.CharField(label='Тема')
     email = forms.EmailField(label='Ваш email')
-    message = forms.CharField(label='Сообщение')
+    message = forms.CharField(label='Сообщение')'''
 
 
 class UsernameForm(forms.Form):
@@ -230,3 +231,11 @@ class PhotoUploadForm(forms.ModelForm):
         model = Photo
         fields = ['image']
         labels = {'image': 'Выберите фото'}
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='Имя', max_length=50)
+    email = forms.EmailField(label='Email')
+
+
+ContactFormset = formset_factory(ContactForm, min_num=2, extra=0)
