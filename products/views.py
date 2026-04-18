@@ -9,7 +9,7 @@ from .forms import (
     ArticleForm, ResumeForm, PhotoUploadForm,
     ContactFormset, OrderFormset, TaskFormset,
     StudentFormset, ProductFormset, RegistrationForm,
-    CustomRegistrationForm,
+    CustomRegistrationForm, CustomAuthenticationForm
 )
 from django.shortcuts import redirect
 from django.views import View
@@ -183,13 +183,11 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    form = CustomRegistrationForm()
+    form = CustomAuthenticationForm()
     if request.method == 'POST':
-        form = CustomRegistrationForm(request.POST)
+        form = CustomAuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.email = form.cleaned_data['email']
-            user.save()
+            user = form.get_user()
             login(request, user)
             return redirect('products:home')
     return render(
