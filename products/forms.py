@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from re import fullmatch
 from django.forms import formset_factory, modelformset_factory
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 
 
 class FeedbackForm(forms.Form):
@@ -260,6 +261,7 @@ TaskFormset = formset_factory(TaskForm, extra=5)
 class StudentForm(forms.Form):
     email = forms.EmailField(label='Email')
 
+
 class BaseStudentFormset(forms.BaseFormSet):
     def clean(self):
         super().clean()
@@ -270,6 +272,7 @@ class BaseStudentFormset(forms.BaseFormSet):
                 if email in emails:
                     raise forms.ValidationError('email не может повторяться')
                 emails.add(email)
+
 
 StudentFormset = formset_factory(StudentForm, formset=BaseStudentFormset, extra=3)
 
@@ -282,21 +285,20 @@ class ProductForm(forms.ModelForm):
             'name': 'Название',
             'price': 'Цена',
             'quantity': 'Количество',
-            'is_published': 'Статус'
+            'is_published': 'Статус',
         }
-    
+
     def clean_name(self):
         name = self.cleaned_data['name']
         if not self.instance.pk and len(name) < 3:
-            raise forms.ValidationError('названия продукта не может быть меньше 3 символов')
+            raise forms.ValidationError(
+                'названия продукта не может быть меньше 3 символов'
+            )
         return name
 
 
 ProductFormset = modelformset_factory(
-    model=Product,
-    form=ProductForm,
-    extra=0,
-    can_delete=True
+    model=Product, form=ProductForm, extra=0, can_delete=True
 )
 
 
@@ -312,9 +314,16 @@ class RegistrationForm(forms.Form):
         password_confirm = cleaned_data.get('password_confirm')
         if password and password_confirm and password != password_confirm:
             self.add_error('password_confirm', 'Пароли не совпадают')
-        
+
     def clean_email(self):
         email = self.cleaned_data['email']
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('Email уже существует')
         return email
+
+
+class CustomRegistrationForm(UserCreationForm):
+    email = forms.EmailField()
+
+    class Meta(UserCreationForm.Meta):
+        fields = UserCreationForm.Meta.fields + ('email',)

@@ -8,8 +8,8 @@
 <body>
   <form method='post'>
     {% csrf_token %}
-    {% comment %} {{ form.as_p }} {% endcomment %}
-    <button type='submit'>Выход</button>
+    {{ form.as_p }}
+    <button type='submit'>Ругистрация</button>
   </form>
 </body>
 </html>
