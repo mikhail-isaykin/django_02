@@ -18,6 +18,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 User = get_user_model()
+from django.contrib.auth.forms import AuthenticationForm
 
 
 class HomePageView(TemplateView):
@@ -181,19 +182,14 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    form = RegistrationForm()
+    form = AuthenticationForm()
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            data = {
-                'username': form.cleaned_data['username'],
-                'email': form.cleaned_data['email'],
-                'password': form.cleaned_data['password']
-            }
-            user = User.objects.create_user(**data)
+            user = form.get_user()
             print(user)
             login(request, user)
-            return redirect('products:formset')
+            return redirect('products:home')
     return render(
         request,
         'products/formset.html',
