@@ -8,10 +8,7 @@
 <body>
   <form method='post'>
     {% csrf_token %}
-    {{ formset.management_form }}
-    {% for form in formset %}
-      {{ form.as_p }}
-    {% endfor %}
+    {{ form.as_p }}
     <button type='submit'>Отправить</button>
   </form>
 </body>

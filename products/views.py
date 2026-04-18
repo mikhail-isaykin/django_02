@@ -8,13 +8,16 @@ from .forms import (
     RegisterForm, FeedbackForm, UserRegisterForm,
     ArticleForm, ResumeForm, PhotoUploadForm,
     ContactFormset, OrderFormset, TaskFormset,
-    StudentFormset, ProductFormset,
+    StudentFormset, ProductFormset, RegistrationForm,
 )
 from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import FormView
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.contrib.auth import login
+User = get_user_model()
 
 
 class HomePageView(TemplateView):
@@ -178,26 +181,21 @@ def multi_upload(request):
     )
 
 def formset_view(request):
-    products = Product.objects.filter(is_published=True, price__gt=100, quantity__gte=10)
-    formset = ProductFormset(queryset=products)
+    form = RegistrationForm()
     if request.method == 'POST':
-        formset = ProductFormset(request.POST, queryset=products)
-        if formset.is_valid():
-            for form in formset:
-                if form.has_changed():
-                    pk = form.instance.pk
-                    if pk is None:
-                        print('Oбъект создан:')
-                    elif form in formset.deleted_forms:
-                        print(f'Oбъект {pk} удален:')
-                    else:
-                        print(f'Oбъект {pk} обновлен:')
-                    print(form.instance.name, form.instance.price)
-            formset.save()
-            print(Product.objects.all())
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            data = {
+                'username': form.cleaned_data['username'],
+                'email': form.cleaned_data['email'],
+                'password': form.cleaned_data['password']
+            }
+            user = User.objects.create_user(**data)
+            print(user)
+            login(request, user)
             return redirect('products:formset')
     return render(
         request,
         'products/formset.html',
-        {'formset': formset}
+        {'form': form}
     )

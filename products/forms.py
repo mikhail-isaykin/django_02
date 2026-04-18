@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from re import fullmatch
 from django.forms import formset_factory, modelformset_factory
+from django.contrib.auth.models import User
 
 
 class FeedbackForm(forms.Form):
@@ -297,3 +298,23 @@ ProductFormset = modelformset_factory(
     extra=0,
     can_delete=True
 )
+
+
+class RegistrationForm(forms.Form):
+    username = forms.CharField(label='Имя пользователя', max_length=50)
+    email = forms.EmailField(label='Email')
+    password = forms.CharField(widget=forms.PasswordInput())
+    password_confirm = forms.CharField(widget=forms.PasswordInput())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+        if password and password_confirm and password != password_confirm:
+            self.add_error('password_confirm', 'Пароли не совпадают')
+        
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('Email уже существует')
+        return email
