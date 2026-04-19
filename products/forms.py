@@ -208,13 +208,6 @@ class ResumeForm(forms.Form):
     resume = forms.FileField()
 
 
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ['avatar']
-        label = {'avatar': 'Аватар'}
-
-
 class PhotoUploadForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

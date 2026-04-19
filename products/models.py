@@ -121,7 +121,7 @@ class Resume(models.Model):
             raise ValidationError('Можно загружать только .png')
 
 
-class Profile(models.Model):
+'''class Profile(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if type(self).is_avatar not in (
@@ -138,7 +138,7 @@ class Profile(models.Model):
     def is_avatar(avatar):
         if avatar.size / 1024 / 1024 > 2:
             raise ValidationError('Размер изображения не должен превышать 2 мб.')
-
+'''
 
 class Gallery(models.Model):
     pass
@@ -158,3 +158,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Profile(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='profile'
+    )
+
+    def __str__(self):
+        return self.user.username

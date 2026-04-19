@@ -3,7 +3,7 @@ from .models import Category, Product, Resume, Profile, Gallery, Photo
 from django.contrib import messages
 from django.shortcuts import render
 from .forms import (
-    FeedbackForm, ProfileForm, LoginForm,
+    FeedbackForm, LoginForm,
     ContactForm, UsernameForm, PasswordForm,
     RegisterForm, FeedbackForm, UserRegisterForm,
     ArticleForm, ResumeForm, PhotoUploadForm,
@@ -140,23 +140,6 @@ def resume_view(request):
         {'form': form}
     )
 
-def profile_view(request):
-    profile, _ = Profile.objects.get_or_create(user=request.user)
-    form = ProfileForm(instance=profile)
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
-        if form.is_valid():
-            try:
-                form.full_clean()
-                form.save()
-                return redirect('products:profile')
-            except ValidationError as error:
-                form.add_error('avatar', error.message_dict['avatar'])
-    return render(
-        request,
-        'profile_edit.html',
-        {'form': form, 'user': request.user}
-    )
 
 class ProfileView(TemplateView):
     template_name = 'profile.html'
