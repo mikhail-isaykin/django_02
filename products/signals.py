@@ -1,13 +1,15 @@
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
-from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models import Product, Photo, Article, Category, Item
 from django.core.exceptions import ValidationError
-User = get_user_model()
 import os
 from django.utils.text import slugify
 from django.utils import timezone
+from django.conf import settings
+User = get_user_model()
+PATH = os.path.join(settings.BASE_DIR, 'log.txt')
 
 
 @receiver(pre_save, sender=User)
@@ -44,3 +46,12 @@ def block_category_delete_if_has_items(sender, instance, **kwargs):
 @receiver(user_logged_in)
 def log_user_login(sender, request, user, **kwargs):
     print(f'Пользователь user.username вошёл в систему в {timezone.now()}')
+
+
+@receiver(user_logged_out)
+def log_user_logout(sender, request, user, **kwargs):
+    with open('log.txt', 'a', encoding='utf-8') as log:
+        if user is None:
+            log.write('Неизвестный пользователь вышел из системы\n')
+        else:
+            log.write(f'Пользователь {user.username} вышел из системы\n')
