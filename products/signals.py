@@ -1,13 +1,13 @@
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
+from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from .models import Product, Photo, Article, Category, Item
 from django.core.exceptions import ValidationError
-
-
 User = get_user_model()
 import os
 from django.utils.text import slugify
+from django.utils import timezone
 
 
 @receiver(pre_save, sender=User)
@@ -40,3 +40,7 @@ def block_category_delete_if_has_items(sender, instance, **kwargs):
     is_item = Item.objects.filter(category=instance).exists()
     if is_item:
         raise ValidationError('Нельзя удалить категорию, в которой есть товары')
+
+@receiver(user_logged_in)
+def log_user_login(sender, request, user, **kwargs):
+    print(f'Пользователь user.username вошёл в систему в {timezone.now()}')
