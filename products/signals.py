@@ -1,8 +1,8 @@
 from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
-from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from .models import Product, Photo, Article, Category, Item
+from .models import Product, Photo, Article, Category, Item, FailedLogin
 from django.core.exceptions import ValidationError
 import os
 from django.utils.text import slugify
@@ -55,3 +55,8 @@ def log_user_logout(sender, request, user, **kwargs):
             log.write('Неизвестный пользователь вышел из системы\n')
         else:
             log.write(f'Пользователь {user.username} вышел из системы\n')
+
+
+@receiver(user_login_failed)
+def log_failed_login(sender, credentials, request, **kwargs):
+    FailedLogin.objects.create(username=credentials.get('username'), ip=request.META.get('REMOTE_ADDR'))

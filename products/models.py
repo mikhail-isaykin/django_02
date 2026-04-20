@@ -31,3 +31,8 @@ class Category(models.Model):
 class Item(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='item')
     name = models.CharField(max_length=100)
+
+
+class FailedLogin(models.Model):
+    username = models.CharField()
+    ip = models.GenericIPAddressField()
