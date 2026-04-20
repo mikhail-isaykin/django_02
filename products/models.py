@@ -24,4 +24,10 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+class Item(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='item')
+    name = models.CharField(max_length=100)
