@@ -1,8 +1,8 @@
-from django.db.models.signals import post_save, pre_save, post_delete, pre_delete
+from django.db.models.signals import post_save, pre_save, post_delete, pre_delete, post_migrate
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from .models import Product, Photo, Article, Category, Item, FailedLogin
+from .models import Product, Photo, Article, Category, Item, FailedLogin, Group
 from django.core.exceptions import ValidationError
 import os
 from django.utils.text import slugify
@@ -60,3 +60,10 @@ def log_user_logout(sender, request, user, **kwargs):
 @receiver(user_login_failed)
 def log_failed_login(sender, credentials, request, **kwargs):
     FailedLogin.objects.create(username=credentials.get('username'), ip=request.META.get('REMOTE_ADDR'))
+
+
+@receiver(post_migrate)
+def create_default_groups(sender, **kwargs):
+    Group.objects.get_or_create(name='Риелтор')
+    Group.objects.get_or_create(name='Клиент')
+    Group.objects.get_or_create(name='Риелтор')

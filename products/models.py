@@ -36,3 +36,7 @@ class Item(models.Model):
 class FailedLogin(models.Model):
     username = models.CharField()
     ip = models.GenericIPAddressField()
+
+
+class Group(models.Model):
+    name = models.CharField()
