@@ -1,9 +1,10 @@
 from django.db.models.signals import post_save, pre_save, post_delete
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from .models import Product, Photo
+from .models import Product, Photo, Article
 User = get_user_model()
 import os
+from django.utils.text import slugify
 
 
 @receiver(pre_save, sender=User)
@@ -15,3 +16,8 @@ def delete_photo_file(sender, instance, **kwargs):
     if os.path.isfile(instance.image.path):
         os.remove(instance.image.path)
         print('Файл удален')
+
+@receiver(pre_save, sender=Article)
+def auto_generate_article_slug(sender, instance, **kwargs):
+    if not instance.slug:
+        instance.slug = slugify(instance.title)
