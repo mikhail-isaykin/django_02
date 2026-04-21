@@ -2,7 +2,7 @@ from django.db.models.signals import post_save, pre_save, post_delete, pre_delet
 from django.contrib.auth.signals import user_logged_in, user_logged_out, user_login_failed
 from django.dispatch import receiver
 from django.contrib.auth import get_user_model
-from .models import Product, Photo, Article, Category, Item, FailedLogin, Group
+from .models import Product, Photo, Article, Category, Item, FailedLogin, Group, Notification
 from django.core.exceptions import ValidationError
 import os
 from django.utils.text import slugify
@@ -45,7 +45,7 @@ def block_category_delete_if_has_items(sender, instance, **kwargs):
 
 @receiver(user_logged_in)
 def log_user_login(sender, request, user, **kwargs):
-    print(f'Пользователь user.username вошёл в систему в {timezone.now()}')
+    print(f'Пользователь {user.username} вошёл в систему в {timezone.now()}')
 
 
 @receiver(user_logged_out)
@@ -67,3 +67,13 @@ def create_default_groups(sender, **kwargs):
     Group.objects.get_or_create(name='Риелтор')
     Group.objects.get_or_create(name='Клиент')
     Group.objects.get_or_create(name='Риелтор')
+
+
+@receiver(user_logged_in)
+def greet_user_on_login(sender, request, user, **kwargs):
+    notification, _ = Notification.objects.get_or_create(
+        user=user,
+        defaults={'message': f'Добро пожаловать, {user.username}!'}
+    )
+    print(notification.message)
+п
