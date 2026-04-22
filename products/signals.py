@@ -76,4 +76,3 @@ def greet_user_on_login(sender, request, user, **kwargs):
         defaults={'message': f'Добро пожаловать, {user.username}!'}
     )
     print(notification.message)
-п
