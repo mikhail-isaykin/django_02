@@ -1,10 +1,27 @@
 import logging
 
-logger = logging.getLogger('products')
+
+class SmartFileHandler(logging.Handler):
+    def __init__(self, formatter=None):
+        super().__init__()
+        self.errors_log_plus = open('errors.log', 'a', encoding='utf-8')
+        self.info_log_plus = open('info.log', 'a', encoding='utf-8')
+        if formatter:
+            self.setFormatter(formatter)
+
+    def emit(self, record):
+        msg = self.format(record)
+        if record.levelno >= logging.ERROR:
+            self.errors_log_plus.write(msg + '\n')
+        elif record.levelno >= logging.INFO:
+            self.info_log_plus.write(msg + '\n')
+
+
+logger = logging.getLogger()
 
 logger.setLevel('DEBUG')
 
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 console = logging.StreamHandler()
 
@@ -20,7 +37,7 @@ file.setLevel(logging.DEBUG)
 
 file.setFormatter(formatter)
 
-logger.addHandler(file)
+logger.addHandler(SmartFileHandler(formatter=formatter))
 
 logger.debug('Начало выполнения')
 logger.info('Сообщение')
@@ -33,7 +50,7 @@ def divide(a, b):
     try:
         return a / b
     except ZeroDivisionError:
-        logger.error('Деление на ноль', exc_info=True)
+        logger.exception('Ошибка деления')
 
 
 result1 = divide(10, 2)
@@ -65,9 +82,15 @@ if __name__ == '__main__':
             logger.warning(f'Особое число {num}')
         else:
             logger.info(f'Текущее число: {num}')
-    #logger.info(f'Текущее число: {num}')
+    logger.info(f'{__name__}: Начало работы программы')
     #logger.warning('warning сообщение')
     logger.error('error сообщение')
     logger.critical('critical сообщение')
     
 product = multiply(5, 3)
+
+name = input('Введите имя: ')
+if name:
+    logger.info(f'Пользователь ввёл имя: {name}')
+else:
+    logger.warning('Имя не введено')
