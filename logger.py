@@ -1,13 +1,13 @@
 import logging
 
-
+'''
 class SmartFileHandler(logging.Handler):
-    def __init__(self, formatter=None):
+    def __init__(self):
         super().__init__()
         self.errors_log_plus = open('errors.log', 'a', encoding='utf-8')
         self.info_log_plus = open('info.log', 'a', encoding='utf-8')
-        if formatter:
-            self.setFormatter(formatter)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        self.setFormatter(formatter)
 
     def emit(self, record):
         msg = self.format(record)
@@ -15,13 +15,14 @@ class SmartFileHandler(logging.Handler):
             self.errors_log_plus.write(msg + '\n')
         elif record.levelno >= logging.INFO:
             self.info_log_plus.write(msg + '\n')
+'''
 
 
 logger = logging.getLogger()
 
 logger.setLevel('DEBUG')
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('[%(asctime)s] %(name)s | %(levelname)-8s | %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 console = logging.StreamHandler()
 
@@ -31,13 +32,12 @@ console.setFormatter(formatter)
 
 logger.addHandler(console)
 
-file = logging.FileHandler('app.log', encoding='utf-8')
+file = logging.FileHandler('system.log', 'a', encoding='utf-8')
 
 file.setLevel(logging.DEBUG)
 
 file.setFormatter(formatter)
-
-logger.addHandler(SmartFileHandler(formatter=formatter))
+logger.addHandler(file)
 
 logger.debug('Начало выполнения')
 logger.info('Сообщение')
@@ -94,3 +94,20 @@ if name:
     logger.info(f'Пользователь ввёл имя: {name}')
 else:
     logger.warning('Имя не введено')
+
+
+app_logger = logging.getLogger('products')
+app_logger.setLevel('DEBUG')
+file = logging.FileHandler('products.log', 'a', encoding='utf-8')
+file.setLevel(logging.DEBUG)
+app_formatter = logging.Formatter('[%(asctime)s] %(name)s | %(levelname)-8s | %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+file.setFormatter(app_formatter)
+app_logger.addHandler(file)
+
+db_logger = logging.getLogger('db')
+db_logger.setLevel('DEBUG')
+file = logging.FileHandler('db.log', 'a', encoding='utf-8')
+file.setLevel(logging.DEBUG)
+db_formatter = logging.Formatter('[%(asctime)s] DB | %(levelname)-8s | %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+file.setFormatter(db_formatter)
+db_logger.addHandler(file)
