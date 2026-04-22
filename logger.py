@@ -2,19 +2,23 @@ import logging
 
 logger = logging.getLogger('products')
 
-logger.setLevel('INFO')
+logger.setLevel('DEBUG')
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 
 console = logging.StreamHandler()
 
-console.setLevel(logging.INFO)
+console.setLevel(logging.DEBUG)
 
 console.setFormatter(formatter)
 
 logger.addHandler(console)
 
-logger.info('Программа запущена')
+logger.debug('Начало выполнения')
+logger.info('Операция выполнена успешно')
+logger.warning('Скоро закончится место на диске')
+logger.error('Файл не найден')
+logger.critical('Система недоступна')
 
 def divide(a, b):
     try:
@@ -23,11 +27,19 @@ def divide(a, b):
         logger.error('Деление на ноль', exc_info=True)
 
 result1 = divide(10, 2)
-print(f"Результат деления 10 на 2: {result1}")
-                  
+print(f"Результат деления 10 на 2: {result1}")             
 
 result2 = divide(10, 0)
 print(f"Результат деления 10 на 0: {result2}")
+
+try:
+    file = open(
+        'missing_file.txt',
+        mode='r',
+        encoding='utf-8',
+    )
+except FileNotFoundError:
+    logger.exception('Файла не существует')
 
 if __name__ == "__main__":
     logger.debug("debug сообщение")
