@@ -83,3 +83,14 @@ def log_new_user(sender, instance, created, **kwargs):
     if created:
         with open(PATH, 'a', encoding='utf-8') as log:
             log.write(f'Новый пользователь зарегистрирован: {instance.username} в {timezone.now()}\n')
+
+@receiver(pre_save, sender=User)
+def log_password_change(sender, instance, **kwargs):
+    try:
+        old = User.objects.get(pk=instance.pk)
+        if old.password != instance.password:
+            with open(PATH, 'a', encoding='utf-8') as log:
+                log.write(f'Пользователь {instance.username} сменил пароль в {timezone.now()}\n')
+    except User.DoesNotExist:
+        pass
+    
