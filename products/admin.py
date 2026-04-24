@@ -5,6 +5,7 @@ from .models import Article
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ['title', 'author', 'published_date']
+    readonly_fields = ['slug']
     list_filter = ['author']
     search_fields = ['title']
-    readonly_fields = ['slug', 'published_date'] 
+    
