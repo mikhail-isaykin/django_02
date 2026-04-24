@@ -76,3 +76,10 @@ def greet_user_on_login(sender, request, user, **kwargs):
         defaults={'message': f'Добро пожаловать, {user.username}!'}
     )
     print(notification.message)
+
+
+@receiver(post_save, sender=User)
+def log_new_user(sender, instance, created, **kwargs):
+    if created:
+        with open(PATH, 'a', encoding='utf-8') as log:
+            log.write(f'Новый пользователь зарегистрирован: {instance.username} в {timezone.now()}\n')
