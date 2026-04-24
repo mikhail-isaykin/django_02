@@ -18,13 +18,13 @@ class Photo(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
 
-class Article(models.Model):
+'''class Article(models.Model):
     title = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True, null=True)
     content = models.TextField()
 
     def __str__(self):
-        return self.title
+        return self.title'''
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -50,3 +50,14 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class Article(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    content = models.TextField()
+    author = models.CharField(max_length=100)
+    published_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
