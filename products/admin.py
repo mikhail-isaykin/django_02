@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Article, Profile, Author, Book
+from .models import Article, Profile, Author, Book, Product
+from django import forms
+from django.utils.text import slugify
+from itertools import count
 
 
 @admin.register(Article)
@@ -18,6 +21,7 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Дополнительно', {'fields': ['website', 'location']}),
     ]
 
+
 #
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
@@ -31,7 +35,14 @@ class BookAdmin(admin.ModelAdmin):
 
 class BookTabularInline(admin.TabularInline):
     model = Book
-    fields = ['author', 'title', 'description', 'published_date', 'internal_notes', 'created_at']
+    fields = [
+        'author',
+        'title',
+        'description',
+        'published_date',
+        'internal_notes',
+        'created_at',
+    ]
     readonly_fields = ['created_at']
     extra = 1
     can_delete = True
@@ -44,3 +55,38 @@ class AuthorAdmin(admin.ModelAdmin):
         ('Контакт', {'fields': ['email']}),
     ]
     inlines = [BookTabularInline]
+
+
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['name', 'slug', 'description', 'price', 'in_stock']
+
+    def clean_price(self):
+        price = self.cleaned_data['price']
+        if price < 0:
+            raise forms.ValidationError('Цена не може быть отрицаельной')
+        return price
+
+    def clean_slug(self):
+        pk = {
+            'pk': self.instance.pk
+        }
+        slug = self.cleaned_data['slug']
+        if not slug or Product.objects.filter(slug=slug).exclude(**pk).exists():
+            counter = count(1)
+            slug = slugify(self.cleaned_data['name'])
+            slug_with_suffix = slug  # изначально без суффикса
+            while Product.objects.filter(slug=slug_with_suffix).exclude(**pk).exists():
+                slug_with_suffix = slug + '-' + str(next(counter))
+            slug = slug_with_suffix
+        return slug
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    form = ProductForm
+    fields = ['name', 'slug', 'description', 'price', 'in_stock', 'created_at']
+    readonly_fields = ['created_at']
+    prepopulated_fields = prepopulated_fields = {'slug': ['name']}
+    list_display = ['name', 'price', 'in_stock', 'created_at']
