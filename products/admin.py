@@ -19,7 +19,12 @@ class ProfileAdmin(admin.ModelAdmin):
     ]
 
 
-class BookInline(admin.TabularInline):
+class BookTabularInline(admin.TabularInline):
+    model = Book
+    extra = 1
+    can_delete = True
+
+class BookStackedInline(admin.StackedInline):
     model = Book
     extra = 1
     can_delete = True
@@ -28,4 +33,7 @@ class BookInline(admin.TabularInline):
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
     fields = ['name', 'email']
-    inlines = [BookInline]
+    inlines = [
+        BookTabularInline
+        #BookStackedInline
+    ]
