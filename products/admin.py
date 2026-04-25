@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Profile
+from .models import Article, Profile, Author, Book
 
 
 @admin.register(Article)
@@ -9,6 +9,7 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ['author']
     search_fields = ['title']
 
+
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'bio', 'website', 'location']
@@ -16,3 +17,15 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Личная информация', {'fields': ['user', 'bio']}),
         ('Дополнительно', {'fields': ['website', 'location']}),
     ]
+
+
+class BookInline(admin.TabularInline):
+    model = Book
+    extra = 1
+    can_delete = True
+
+
+@admin.register(Author)
+class AuthorAdmin(admin.ModelAdmin):
+    fields = ['name', 'email']
+    inlines = [BookInline]
