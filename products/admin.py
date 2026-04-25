@@ -18,22 +18,29 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Дополнительно', {'fields': ['website', 'location']}),
     ]
 
+#
+@admin.register(Book)
+class BookAdmin(admin.ModelAdmin):
+    list_display = ['title', 'author', 'published_date']
+    list_filter = ['published_date']
+    search_fields = ['title', 'author__name']
+    ordering = ['-published_date']
+    readonly_fields = ['created_at']
+    fields = ['title', 'description', 'author', 'published_date']
+
 
 class BookTabularInline(admin.TabularInline):
     model = Book
-    extra = 1
-    can_delete = True
-
-class BookStackedInline(admin.StackedInline):
-    model = Book
+    fields = ['author', 'title', 'description', 'published_date', 'internal_notes', 'created_at']
+    readonly_fields = ['created_at']
     extra = 1
     can_delete = True
 
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    fields = ['name', 'email']
-    inlines = [
-        BookTabularInline
-        #BookStackedInline
+    fieldsets = [
+        ('Основная информация', {'fields': ['name', 'birth_date']}),
+        ('Контакт', {'fields': ['email']}),
     ]
+    inlines = [BookTabularInline]
