@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Profile, Author, Book, Product
+from .models import Article, Profile, Author, Book, Product, Course
 from django import forms
 from django.utils.text import slugify
 from itertools import count
@@ -90,3 +90,22 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at']
     prepopulated_fields = prepopulated_fields = {'slug': ['name']}
     list_display = ['name', 'price', 'in_stock', 'created_at']
+
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = '__all__'
+    
+    def clean(self):
+        cleaned_data =  super().clean()
+        discount_price = cleaned_data.get('discount_price')
+        price = cleaned_data.get('price')
+        if discount_price and discount_price > price:
+            raise forms.ValidationError('Скидка должна быть <= цена')
+
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    form = CourseForm
+    readonly_fields = ['created_at']
+    list_display = ['title', 'price', 'discount_price', 'is_active']
