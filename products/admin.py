@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Profile, Author, Book, Product, Course
+from .models import Article, Profile, Author, Book, Product, Course, BlogPost
 from django import forms
 from django.utils.text import slugify
 from itertools import count
@@ -109,3 +109,24 @@ class CourseAdmin(admin.ModelAdmin):
     form = CourseForm
     readonly_fields = ['created_at']
     list_display = ['title', 'price', 'discount_price', 'is_active']
+
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ['title', 'slug', 'created_at']
+    search_fields = ['title', 'content']
+    readonly_fields = ['created_at']
+    
+    def save_model(self, request, obj, form, change):
+        if not obj.slug:
+            obj.slug = BlogPostAdmin.generate_unique_slug(obj.title, obj.pk)
+        super().save_model(request, obj, form, change)
+
+    @staticmethod
+    def generate_unique_slug(title, pk):
+        counter = count(1)
+        slug = slugify(title)
+        slug_with_suffix = slug
+        while BlogPost.objects.filter(slug=slug_with_suffix).exclude(pk=pk).exists():
+            slug_with_suffix = slug + '-' + str(next(counter))
+        return slug_with_suffix
