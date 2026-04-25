@@ -1,5 +1,16 @@
 from django.contrib import admin
-from .models import Article, Profile, Author, Book, Product, Course, BlogPost, Customer
+from .models import (
+    Article,
+    Profile,
+    Author,
+    Book,
+    Product,
+    Course,
+    BlogPost,
+    Customer,
+    Order,
+    OrderItem,
+)
 from django import forms
 from django.utils.text import slugify
 from itertools import count
@@ -20,6 +31,7 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Личная информация', {'fields': ['user', 'bio']}),
         ('Дополнительно', {'fields': ['website', 'location']}),
     ]
+
 
 #
 @admin.register(Book)
@@ -68,9 +80,7 @@ class ProductForm(forms.ModelForm):
         return price
 
     def clean_slug(self):
-        pk = {
-            'pk': self.instance.pk
-        }
+        pk = {'pk': self.instance.pk}
         slug = self.cleaned_data['slug']
         if not slug or Product.objects.filter(slug=slug).exclude(**pk).exists():
             counter = count(1)
@@ -95,13 +105,14 @@ class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = '__all__'
-    
+
     def clean(self):
-        cleaned_data =  super().clean()
+        cleaned_data = super().clean()
         discount_price = cleaned_data.get('discount_price')
         price = cleaned_data.get('price')
         if discount_price and discount_price > price:
             raise forms.ValidationError('Скидка должна быть <= цена')
+
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
@@ -115,7 +126,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     list_display = ['title', 'slug', 'created_at']
     search_fields = ['title', 'content']
     readonly_fields = ['created_at']
-    
+
     def save_model(self, request, obj, form, change):
         if not obj.slug:
             obj.slug = BlogPostAdmin.generate_unique_slug(obj.title, obj.pk)
@@ -142,9 +153,26 @@ class CustomerForm(forms.ModelForm):
             raise forms.ValidationError('Пользователь с таким email уже существует')
         return email
 
+
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     form = CustomerForm
     list_display = ['first_name', 'last_name', 'email', 'created_at']
     search_fields = ['first_name', 'email']
     readonly_fields = ['created_at']
+
+#
+class OrderItemTabularInline(admin.TabularInline):
+    model = OrderItem
+    extra = 1
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Основная информация', {'fields': ['customer', 'status']}),
+        ('Системные данные', {'fields': ['created_at', 'updated_at']}),
+    ]
+    readonly_fields = ['created_at', 'updated_at']
+    ordering = ['-created_at']
+    inlines = [OrderItemTabularInline]
