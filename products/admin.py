@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Profile, Author, Book, Product, Course, BlogPost
+from .models import Article, Profile, Author, Book, Product, Course, BlogPost, Customer
 from django import forms
 from django.utils.text import slugify
 from itertools import count
@@ -20,7 +20,6 @@ class ProfileAdmin(admin.ModelAdmin):
         ('Личная информация', {'fields': ['user', 'bio']}),
         ('Дополнительно', {'fields': ['website', 'location']}),
     ]
-
 
 #
 @admin.register(Book)
@@ -130,3 +129,22 @@ class BlogPostAdmin(admin.ModelAdmin):
         while BlogPost.objects.filter(slug=slug_with_suffix).exclude(pk=pk).exists():
             slug_with_suffix = slug + '-' + str(next(counter))
         return slug_with_suffix
+
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if Customer.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('Пользователь с таким email уже существует')
+        return email
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    form = CustomerForm
+    list_display = ['first_name', 'last_name', 'email', 'created_at']
+    search_fields = ['first_name', 'email']
+    readonly_fields = ['created_at']
