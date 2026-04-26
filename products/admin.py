@@ -10,6 +10,7 @@ from .models import (
     Customer,
     Order,
     OrderItem,
+    Job,
 )
 from django import forms
 from django.utils.text import slugify
@@ -161,6 +162,7 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ['first_name', 'email']
     readonly_fields = ['created_at']
 
+
 #
 class OrderItemTabularInline(admin.TabularInline):
     model = OrderItem
@@ -176,3 +178,10 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
     ordering = ['-created_at']
     inlines = [OrderItemTabularInline]
+
+
+@admin.register(Job)
+class JobAdmin(admin.ModelAdmin):
+    readonly_fields = ['created_at']
+    list_display = ['title', 'status', 'created_at']
+    list_editable = ['status']

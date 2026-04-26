@@ -114,3 +114,15 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f'{self.product_name} x {self.quantity}'
+
+
+class Job(models.Model):
+    title = models.CharField(max_length=200)
+    status = models.CharField(
+        max_length=50,
+        choices=[("draft", "Черновик"), ("published", "Опубликовано")]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
