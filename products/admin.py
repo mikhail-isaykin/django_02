@@ -16,6 +16,7 @@ from .models import (
 from django import forms
 from django.utils.text import slugify
 from itertools import count
+from django.db.models import F
 
 
 @admin.register(Article)
@@ -101,7 +102,12 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at']
     prepopulated_fields = prepopulated_fields = {'slug': ['name']}
     list_display = ['name', 'price', 'in_stock', 'created_at']
+    actions = ['apply_discount']
 
+    @admin.action(description='Скидка 10')
+    def apply_discount(self, request, queryset):
+        updated = queryset.filter(price__gt=0).update(price=F('price') * 0.9)
+        self.message_user(request, f'Скидка применена для {updated} продуктов')
 
 class CourseForm(forms.ModelForm):
     class Meta:
