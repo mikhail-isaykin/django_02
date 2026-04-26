@@ -1,5 +1,5 @@
 """
-WSGI config for training_project project.
+WSGI config for jobboard project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
