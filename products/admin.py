@@ -12,6 +12,7 @@ from .models import (
     OrderItem,
     Job,
     Ad,
+    RealEstate,
 )
 from django import forms
 from django.utils.text import slugify
@@ -220,3 +221,22 @@ class AdAdmin(admin.ModelAdmin):
         while Ad.objects.filter(slug=slug_with_suffix).exclude(pk=pk).exists():
             slug_with_suffix = slug + '-' + str(next(counter))
         return slug_with_suffix
+
+@admin.register(RealEstate)
+class RealEstateAdmin(admin.ModelAdmin):
+    list_display = ['title', 'price', 'is_published', 'created_at']
+    list_editable = ['price', 'is_published']
+    readonly_fields = ['created_at']
+    save_as = True
+    save_on_top = True
+    actions = ['make_published', 'make_unpublished']
+
+    @admin.action(description='Опубликовать')
+    def make_published(self, request, queryset):
+        updated = queryset.filter(is_published=False).update(is_published=True)
+        self.message_user(request, f'Опубликовано {updated} объявлений.')
+    
+    @admin.action(description='Снять с публикации')
+    def make_unpublished(self, request, queryset):
+        updated = queryset.filter(is_published=True).update(is_published=False)
+        self.message_user(request, f'Снято с публикации {updated} объявлений.')
