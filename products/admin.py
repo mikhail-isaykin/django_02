@@ -11,6 +11,7 @@ from .models import (
     Order,
     OrderItem,
     Job,
+    Ad,
 )
 from django import forms
 from django.utils.text import slugify
@@ -185,3 +186,24 @@ class JobAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at']
     list_display = ['title', 'status', 'created_at']
     list_editable = ['status']
+
+@admin.register(Ad)
+class AdAdmin(admin.ModelAdmin):
+    list_display = ['title', 'status', 'created_at']
+    readonly_fields = ['created_at']
+    prepopulated_fields = {'slug': ['title']}
+    save_as = True
+
+    def save_model(self, request, obj, form, change):
+        if not obj.slug:
+            obj.slug = AdAdmin.generate_unique_slug(obj.title, obj.pk)
+        super().save_model(request, obj, form, change)
+
+    @staticmethod
+    def generate_unique_slug(title, pk):
+        counter = count(1)
+        slug = slugify(title)
+        slug_with_suffix = slug
+        while Ad.objects.filter(slug=slug_with_suffix).exclude(pk=pk).exists():
+            slug_with_suffix = slug + '-' + str(next(counter))
+        return slug_with_suffix
