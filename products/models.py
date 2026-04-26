@@ -119,21 +119,20 @@ class OrderItem(models.Model):
 class Job(models.Model):
     title = models.CharField(max_length=200)
     status = models.CharField(
-        max_length=50,
-        choices=[("draft", "Черновик"), ("published", "Опубликовано")]
+        max_length=50, choices=[('draft', 'Черновик'), ('published', 'Опубликовано')]
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
+
 class Ad(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     status = models.CharField(
-        max_length=50,
-        choices=[("draft", "Черновик"), ("published", "Опубликовано")]
+        max_length=50, choices=[('draft', 'Черновик'), ('published', 'Опубликовано')]
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -187,12 +187,19 @@ class JobAdmin(admin.ModelAdmin):
     list_display = ['title', 'status', 'created_at']
     list_editable = ['status']
 
+
 @admin.register(Ad)
 class AdAdmin(admin.ModelAdmin):
     list_display = ['title', 'status', 'created_at']
     readonly_fields = ['created_at']
     prepopulated_fields = {'slug': ['title']}
     save_as = True
+    actions = ['make_published']
+
+    @admin.action(description='Опубликовать выбранные')
+    def make_published(self, request, queryset):
+        updated = queryset.filter(status='draft').update(status='published')
+        self.message_user(request, f'Опубликовано {updated} объявлений.')
 
     def save_model(self, request, obj, form, change):
         if not obj.slug:
