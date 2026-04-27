@@ -4,6 +4,7 @@ import companies.utils
 import django.db.models.deletion
 from django.conf import settings
 from django.db import migrations, models
+import core.utils
 
 
 class Migration(migrations.Migration):
@@ -22,7 +23,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255, verbose_name='Название')),
                 ('description', models.TextField(blank=True, null=True, verbose_name='Описание')),
                 ('website', models.URLField(blank=True, null=True, verbose_name='Ссылка на сайт')),
-                ('logo', models.ImageField(blank=True, null=True, upload_to=companies.utils.logo_upload_path, verbose_name='Логотип')),
+                ('logo', models.ImageField(blank=True, null=True, upload_to=companies.utils.logo_upload_path, verbose_name='Логотип', validators=[core.utils.validate_image_size])),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('owner', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='company', to=settings.AUTH_USER_MODEL)),
             ],

@@ -2,6 +2,8 @@
 
 import users.utils
 from django.db import migrations, models
+import core.utils
+
 
 
 class Migration(migrations.Migration):
@@ -14,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='profile',
             name='avatar',
-            field=models.ImageField(blank=True, null=True, upload_to=users.utils.avatar_upload_path, validators=[users.utils.validate_avatar_size]),
+            field=models.ImageField(blank=True, null=True, upload_to=users.utils.avatar_upload_path, validators=[core.utils.validate_image_size]),
         ),
     ]
