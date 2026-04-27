@@ -153,7 +153,9 @@ LOGGING = {
             'formatter': 'simple',
         },
         'file': {
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024,
+            'backupCount': 3,
             'filename': BASE_DIR / 'logs' / 'jobboard.log',
             'formatter': 'verbose',
         },
