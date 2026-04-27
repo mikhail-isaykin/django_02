@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from core.utils import validate_image_size
 from .utils import logo_upload_path
 
 
@@ -11,7 +12,11 @@ class Company(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name='Описание')
     website = models.URLField(blank=True, null=True, verbose_name='Ссылка на сайт')
     logo = models.ImageField(
-        upload_to=logo_upload_path, blank=True, null=True, verbose_name='Логотип'
+        upload_to=logo_upload_path,
+        blank=True,
+        null=True,
+        verbose_name='Логотип',
+        validators=[validate_image_size],
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

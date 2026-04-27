@@ -1,13 +1,14 @@
 from django.db import models
 from django.conf import settings
-from .utils import validate_avatar_size, avatar_upload_path
+from core.utils import validate_image_size
+from .utils import avatar_upload_path
 
 
 class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile'
     )
-    avatar = models.ImageField(upload_to=avatar_upload_path, blank=True, null=True, validators=[validate_avatar_size])
+    avatar = models.ImageField(upload_to=avatar_upload_path, blank=True, null=True, validators=[validate_image_size])
     bio = models.TextField(blank=True, null=True)
     phone = models.CharField(
         max_length=20, blank=True, null=True, verbose_name='Телефон'
