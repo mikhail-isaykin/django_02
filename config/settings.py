@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'companies.apps.CompaniesConfig',
+    'resumes.apps.ResumesConfig',
 ]
 
 MIDDLEWARE = [
