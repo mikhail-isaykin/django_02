@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Profile
 from django.contrib.auth import get_user_model
+from resumes.admin import ResumeInline
 
 User = get_user_model()
 
@@ -22,7 +23,7 @@ class ProfileInline(admin.StackedInline):
     can_delete = False
 
 class UserAdmin(admin.ModelAdmin):
-    inlines = [ProfileInline]
+    inlines = [ProfileInline, ResumeInline]
 
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
