@@ -7,4 +7,4 @@ def validate_avatar_size(image):
 
 
 def avatar_upload_path(instance, filename):
-    return f'avatars/{instance.user.id}/{filename}'
+    return f'logos/{instance.owner.id}/{filename}'
