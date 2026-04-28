@@ -30,6 +30,13 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def average_rating(self):
+        feedbacks = self.feedbacks.values_list('rating', flat=True)
+        if feedbacks:
+            return round(sum(feedbacks) / len(feedbacks), 1)
+        return 0
+
 
 class Vacancy(models.Model):
     EMPLOYMENT_CHOICES = [
@@ -46,11 +53,26 @@ class Vacancy(models.Model):
         ('shift', 'Сменный график'),
         ('remote', 'Удалённо'),
     ]
-
+    SALARY_TYPE_CHOICES = [
+        ('weekly', 'Раз в неделю'),
+        ('monthly', 'Раз в месяц'),
+        ('twice_monthly', '2 раза в месяц'),
+        ('daily', 'Ежедневно'),
+        ('hourly', 'По часам'),
+        ('negotiable', 'Договорная'),
+    ]
+    EXPERIENCE_CHOICES = [
+        ('with_experience', 'С опытом'),
+        ('without_experience', 'Без опыта'),
+    ]
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name='vacancies',
+        Company,
+        on_delete=models.CASCADE,
+        related_name='vacancies',
     )
-    profession = models.ForeignKey(Profession, on_delete=models.CASCADE, related_name='vacancies')
+    profession = models.ForeignKey(
+        Profession, on_delete=models.CASCADE, related_name='vacancies'
+    )
     title = models.CharField(max_length=255, verbose_name='Название вакансии')
     description = models.TextField(verbose_name='Общее описание')
     salary = models.DecimalField(
@@ -59,8 +81,18 @@ class Vacancy(models.Model):
         validators=[MinValueValidator(0)],
         verbose_name='Зарплата',
     )
+    salary_type = models.CharField(
+        max_length=255,
+        choices=SALARY_TYPE_CHOICES,
+        verbose_name='Тип зарплаты',
+    )
     experience = models.CharField(
         max_length=255, blank=True, null=True, verbose_name='Опыт работы'
+    )
+    experience_required = models.CharField(
+        max_length=50,
+        choices=EXPERIENCE_CHOICES,
+        verbose_name='Требуемый опыт',
     )
     employment_type = models.CharField(
         max_length=255,
@@ -91,3 +123,23 @@ class Vacancy(models.Model):
 
     def __str__(self):
         return f'{self.title} в {self.company}'
+
+
+class FeedbackCompany(models.Model):
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name='feedbacks'
+    )
+    comment = models.TextField(verbose_name='Отзыв')
+    rating = models.PositiveSmallIntegerField(
+        choices=[(i, str(i)) for i in range(1, 6)], verbose_name='Рейтинг'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Отзыв о компании'
+        verbose_name_plural = 'Отзывы о компаниях'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Отзыв о {self.company} — {self.rating}/5'
