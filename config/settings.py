@@ -161,6 +161,7 @@ LOGGING = {
             'backupCount': 3,
             'filename': BASE_DIR / 'logs' / 'jobboard.log',
             'formatter': 'verbose',
+            'delay': True,
         },
     },
     'loggers': {
