@@ -3,6 +3,7 @@ from django.conf import settings
 from core.utils import validate_image_size
 from .utils import logo_upload_path
 from django.core.validators import MinValueValidator
+from professions.models import Profession
 
 
 class Company(models.Model):
@@ -47,8 +48,9 @@ class Vacancy(models.Model):
     ]
 
     company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name='vacancies'
+        Company, on_delete=models.CASCADE, related_name='vacancies',
     )
+    profession = models.ForeignKey(Profession, on_delete=models.CASCADE, related_name='vacancies')
     title = models.CharField(max_length=255, verbose_name='Название вакансии')
     description = models.TextField(verbose_name='Общее описание')
     salary = models.DecimalField(

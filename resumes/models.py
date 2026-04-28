@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator
+from professions.models import Profession
 
 
 class Resume(models.Model):
@@ -10,6 +11,7 @@ class Resume(models.Model):
 ]
     
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='resumes')
+    profession = models.ForeignKey(Profession, on_delete=models.PROTECT, related_name='resumes')
     first_name = models.CharField(max_length=255, verbose_name='Имя')
     last_name = models.CharField(max_length=255, verbose_name='Фамилия')
     middle_name = models.CharField(max_length=255, blank=True, null=True, verbose_name='Отчество')
